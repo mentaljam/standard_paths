@@ -96,11 +96,13 @@ impl StandardLocation {
                 Some(path)
             },
 
+            LocationType::DataLocation |
             LocationType::AppDataLocation | 
             LocationType::AppLocalDataLocation | 
             LocationType::GenericDataLocation => {
                 let mut path = get_var_or_home!("XDG_DATA_HOME", ".local", "share");
-                if location == LocationType::AppDataLocation ||
+                if location == LocationType::DataLocation ||
+                   location == LocationType::AppDataLocation ||
                    location == LocationType::AppLocalDataLocation {
                     self.append_organization_and_app(&mut path);
                 }
@@ -290,6 +292,7 @@ impl StandardLocation {
                 }
                 dirs
             },
+            LocationType::DataLocation |
             LocationType::AppDataLocation |
             LocationType::AppLocalDataLocation => {
                 let mut dirs = xdg_data_dirs();
