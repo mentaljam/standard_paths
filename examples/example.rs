@@ -29,8 +29,13 @@ fn main() {
 
     let sl = StandardLocation::new_with_names("app", "org");
     
-    println!("Listing writable locations:");
-    for (name, value) in locations {
+    println!("\nListing standard locations:");
+    for &(ref name, ref value) in &locations {
+        println!("{:>14}: {:?}", name, sl.standard_locations(value.clone()).unwrap_or(Vec::new()));
+    }
+
+    println!("\nListing writable locations:");
+    for &(ref name, ref value) in &locations {
         println!("{:>14}: {:?}", name, sl.writable_location(value.clone()).unwrap_or("".into()));
     }
 }
