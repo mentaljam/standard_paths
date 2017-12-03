@@ -7,6 +7,7 @@ repository = "https://github.com/mentaljam/standard_paths"
 keywords = ["system", "standard", "paths"]
 categories = ["filesystem"]
 license = "MIT"
+readme = "README.md"
 
 [target.'cfg(unix)'.dependencies]
 users = "0.5.0"
