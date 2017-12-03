@@ -212,12 +212,12 @@ impl StandardLocation {
                 }
 
                 let dir = match location {
-                    LocationType::DesktopLocation       => "Desktop",
-                    LocationType::DocumentsLocation     => "Documents",
-                    LocationType::PicturesLocation      => "Pictures",
-                    LocationType::MusicLocation         => "Music",
-                    LocationType::MoviesLocation        => "Videos",
-                    LocationType::DownloadLocation      => "Downloads",
+                    LocationType::DesktopLocation   => "Desktop",
+                    LocationType::DocumentsLocation => "Documents",
+                    LocationType::PicturesLocation  => "Pictures",
+                    LocationType::MusicLocation     => "Music",
+                    LocationType::MoviesLocation    => "Videos",
+                    LocationType::DownloadLocation  => "Downloads",
                     _ => ""
                 };
                 if dir.is_empty() {
