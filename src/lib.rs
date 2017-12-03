@@ -58,4 +58,8 @@ impl StandardLocation {
     pub fn writable_location(&self, location: LocationType) -> Option<PathBuf> {
         self.writable_location_impl(location)
     }
+
+    pub fn standard_locations(&self, location: LocationType) -> Option<Vec<PathBuf>> {
+        self.standard_locations_impl(location)
+    }
 }

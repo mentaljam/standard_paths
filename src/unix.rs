@@ -34,6 +34,42 @@ macro_rules! get_var_or_home {
     }
 }
 
+fn xdg_config_dirs() -> Vec<PathBuf> {
+    // http://standards.freedesktop.org/basedir-spec/latest/
+    match env::var("XDG_CONFIG_DIRS") {
+        Ok(paths) => {
+            let mut paths: Vec<PathBuf> = paths.split(':').map(PathBuf::from).collect();
+            paths.dedup();
+            paths
+        },
+        _ => vec!["/etc/xdg".into()]
+    }
+}
+
+fn xdg_data_dirs() -> Vec<PathBuf> {
+    // http://standards.freedesktop.org/basedir-spec/latest/
+    match env::var("XDG_DATA_DIRS") {
+        Ok(paths) => {
+            let mut paths: Vec<PathBuf> = paths.split(':').map(PathBuf::from).collect();
+            paths.dedup();
+            let mut res = Vec::new();
+            for path in paths {
+                let path_str = path.to_str().unwrap();
+                if !path_str.is_empty() && path_str.starts_with('/') {
+                    res.push(path.canonicalize().unwrap());
+                }
+            }
+            res
+        },
+        _ => {
+            vec![
+                "/usr/local/share".into(),
+                "/usr/share".into()
+            ]
+        }
+    }
+}
+
 impl StandardLocation {
     fn append_organization_and_app(&self, path: &mut PathBuf) {
         if !self.organisation_name.is_empty() {
@@ -231,5 +267,50 @@ impl StandardLocation {
                 Some(path)
             }
         }
+    }
+
+    #[inline]
+    #[doc(hidden)]
+    pub fn standard_locations_impl(&self, location: LocationType) -> Option<Vec<PathBuf>> {
+        let mut res: Vec<PathBuf> = match location {
+            LocationType::ConfigLocation |
+            LocationType::GenericConfigLocation => xdg_config_dirs(),
+            LocationType::AppConfigLocation => {
+                let mut dirs = xdg_config_dirs();
+                for dir in dirs.iter_mut() {
+                    self.append_organization_and_app(dir);
+                }
+                dirs
+            },
+            LocationType::GenericDataLocation => xdg_data_dirs(),
+            LocationType::ApplicationsLocation => {
+                let mut dirs = xdg_data_dirs();
+                for dir in dirs.iter_mut() {
+                    dir.push("applications");
+                }
+                dirs
+            },
+            LocationType::AppDataLocation |
+            LocationType::AppLocalDataLocation => {
+                let mut dirs = xdg_data_dirs();
+                for dir in dirs.iter_mut() {
+                    self.append_organization_and_app(dir);
+                }
+                dirs
+            },
+            LocationType::FontsLocation => match env::home_dir() {
+                Some(mut path) => {
+                    path.push(".fonts");
+                    vec![path]
+                },
+                _ => return None
+            },
+            _ => Vec::new()
+        };
+        match self.writable_location_impl(location) {
+            Some(path) => res.insert(0, path),
+            _ => ()
+        }
+        Some(res)
     }
 }
