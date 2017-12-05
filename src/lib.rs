@@ -47,6 +47,14 @@ impl StandardLocation {
             organisation_name: String::new()
         }
     }
+    fn append_organization_and_app(&self, path: &mut PathBuf) {
+        if !self.organisation_name.is_empty() {
+            path.push(&self.organisation_name);
+        }
+        if !self.app_name.is_empty() {
+            path.push(&self.app_name);
+        }
+    }
 
     pub fn new_with_names(app: &'static str, organisation: &'static str) -> StandardLocation {
         StandardLocation {

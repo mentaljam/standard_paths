@@ -71,15 +71,7 @@ fn xdg_data_dirs() -> Vec<PathBuf> {
 }
 
 impl StandardLocation {
-    fn append_organization_and_app(&self, path: &mut PathBuf) {
-        if !self.organisation_name.is_empty() {
-            path.push(&self.organisation_name);
-        }
-        if !self.app_name.is_empty() {
-            path.push(&self.app_name);
-        }
-    }
-
+    
     #[inline]
     #[doc(hidden)]
     pub fn writable_location_impl(&self, location: LocationType) -> Option<PathBuf> {
@@ -275,6 +267,7 @@ impl StandardLocation {
     #[doc(hidden)]
     pub fn standard_locations_impl(&self, location: LocationType) -> Option<Vec<PathBuf>> {
         let mut res: Vec<PathBuf> = match location {
+
             LocationType::ConfigLocation |
             LocationType::GenericConfigLocation => xdg_config_dirs(),
             LocationType::AppConfigLocation => {
@@ -284,7 +277,9 @@ impl StandardLocation {
                 }
                 dirs
             },
+
             LocationType::GenericDataLocation => xdg_data_dirs(),
+
             LocationType::ApplicationsLocation => {
                 let mut dirs = xdg_data_dirs();
                 for dir in dirs.iter_mut() {
@@ -292,6 +287,7 @@ impl StandardLocation {
                 }
                 dirs
             },
+
             LocationType::DataLocation |
             LocationType::AppDataLocation |
             LocationType::AppLocalDataLocation => {
@@ -301,6 +297,7 @@ impl StandardLocation {
                 }
                 dirs
             },
+
             LocationType::FontsLocation => match env::home_dir() {
                 Some(mut path) => {
                     path.push(".fonts");
@@ -308,12 +305,15 @@ impl StandardLocation {
                 },
                 _ => return None
             },
+
             _ => Vec::new()
         };
+
         match self.writable_location_impl(location) {
             Some(path) => res.insert(0, path),
             _ => ()
         }
+
         Some(res)
     }
 }
