@@ -14,7 +14,6 @@ fn main() {
         ("Pictures",        PicturesLocation),
         ("Temp",            TempLocation),
         ("Home",            HomeLocation),
-        ("Data",            DataLocation),
         ("Cache",           CacheLocation),
         ("Generic Data",    GenericDataLocation),
         ("Runtime",         RuntimeLocation),

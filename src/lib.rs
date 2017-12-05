@@ -19,7 +19,6 @@ pub enum LocationType {
     PicturesLocation,
     TempLocation,
     HomeLocation,
-    DataLocation,
     CacheLocation,
     GenericDataLocation,
     RuntimeLocation,
