@@ -9,3 +9,7 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 #### Unix
 - writable_location
 - standard_locations
+
+#### Windows
+- writable_location
+- standard_locations
