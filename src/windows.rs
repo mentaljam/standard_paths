@@ -4,13 +4,15 @@ use std::path::PathBuf;
 use std::env;
 use std::ptr;
 use std::slice;
-use std::ffi::OsString;
-use std::os::windows::ffi::OsStringExt;
+use std::ffi::{OsStr, OsString};
+use std::os::windows::ffi::{OsStrExt, OsStringExt};
 
 use self::winapi::shared::guiddef::GUID;
-use self::winapi::um::shlobj::SHGetKnownFolderPath;
 use self::winapi::um::winnt::PWSTR;
+use self::winapi::um::shlobj::SHGetKnownFolderPath;
 use self::winapi::um::combaseapi::CoTaskMemFree;
+use self::winapi::shared::minwindef::DWORD;
+use self::winapi::um::winbase::GetBinaryTypeW;
 
 use ::LocationType;
 use ::LocationType::*;
@@ -268,4 +270,86 @@ impl StandardLocation {
         }
         Some(dirs)
     }
+}
+
+/// Detect if `path` is an executable (based on
+/// [GetBinaryType](https://msdn.microsoft.com/ru-ru/library/windows/desktop/aa364819.aspx)).
+fn is_executable<P>(path: P) -> bool where P: AsRef<OsStr> {
+    unsafe {
+        let name = path.as_ref().encode_wide().chain(Some(0)).collect::<Vec<_>>();
+        let mut bt: DWORD = 0;
+        GetBinaryTypeW(name.as_ptr(), &mut bt) != 0
+    }
+}
+
+#[inline]
+#[doc(hidden)]
+pub fn find_executable_in_paths_impl<S>(name: S, paths: Vec<PathBuf>) -> Option<Vec<PathBuf>>
+where S: Into<String> {
+    let name = name.into();
+    let path = PathBuf::from(&name);
+
+    // On Windows, if the name does not have a suffix or a suffix not in PATHEXT ("xx.foo"),
+    // append suffixes from PATHEXT. If %PATHEXT% does not contain .exe, it is either empty or distorted.
+    let mut exe_extensions = match env::var("PATHEXT") {
+        Ok(pathext) => env::split_paths(&pathext)
+            .map(|e| e.to_str().unwrap().to_lowercase().get(1..).unwrap().to_string())
+            .collect(),
+        _ => Vec::new()
+    };
+    let exe = "exe".into();
+    if exe_extensions.is_empty() || !exe_extensions.contains(&exe) {
+        exe_extensions = vec![
+            exe,
+            "com".into(),
+            "bat".into(),
+            "cmd".into()
+        ];
+    }
+
+    // Check absolute paths
+    if path.is_absolute() {
+        if is_executable(&name) {
+            return Some(vec![path])
+        } else {
+            let mut res = Vec::new();
+            for ext in &exe_extensions {
+                let mut full_path = path.clone();
+                full_path.set_extension(ext);
+                if is_executable(&full_path) {
+                    res.push(full_path);
+                }
+            }
+            return if res.is_empty() { None } else { Some(res) }
+        }
+    }
+
+    // Read system paths if not provided
+    let mut paths = paths;
+    check_paths!(paths);
+
+    // At first search the provided name
+    let mut res = Vec::new();
+    for mut path in paths.to_owned() {
+        path.push(&name);
+        if is_executable(&path) {
+            res.push(path);
+        }
+    }
+
+    // Then check if an extension could be appended
+    if path.extension().is_none() {
+        for mut path in paths.to_owned() {
+            path.push(&name);
+            for ext in &exe_extensions {
+                let mut full_path = path.clone();
+                full_path.set_extension(ext);
+                if is_executable(&full_path) {
+                    res.push(full_path);
+                }
+            }
+        }
+    }
+
+    if res.is_empty() { None } else { Some(res) }
 }

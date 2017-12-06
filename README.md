@@ -14,3 +14,4 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 #### Windows
 - writable_location
 - standard_locations
+- find_executable
