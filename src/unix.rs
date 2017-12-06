@@ -127,7 +127,7 @@ impl StandardLocation {
                             return None;
                         }
                         (PathBuf::from(path), md)
-                    }
+                    },
                     _ => {
                         let mut runtime_dir = String::from("runtime-");
                         runtime_dir.push_str(user.name());
@@ -313,4 +313,57 @@ impl StandardLocation {
 
         Some(res)
     }
+}
+
+/// Detect if `path` is an executable based on its rights
+pub fn is_executable<P>(path: P) -> bool where P: Into<PathBuf> {
+    let path = path.into();
+    match fs::metadata(&path) {
+        Ok(md) => md.permissions().mode() & 0o111 != 0,
+        _ => false
+    }
+}
+
+const EXTENSIONS: [&'static str; 3] = ["bin", "run", "sh"];
+
+#[inline]
+#[doc(hidden)]
+pub fn find_executable_in_paths_impl<S>(name: S, paths: Vec<PathBuf>) -> Option<Vec<PathBuf>>
+where S: Into<String> {
+    let name = name.into();
+    let path = PathBuf::from(&name);
+
+    // Check absolute paths
+    if path.is_absolute() && is_executable(&name) {
+        return Some(vec![path])
+    }
+
+    // Read system paths if not provided
+    let mut paths = paths;
+    check_paths!(paths);
+
+    // At first search the provided name
+    let mut res = Vec::new();
+    for mut path in paths.to_owned() {
+        path.push(&name);
+        if is_executable(&path) {
+            res.push(path);
+        }
+    }
+
+    // Then check if an extension could be appended
+    if path.extension().is_none() {
+        for mut path in paths.to_owned() {
+            path.push(&name);
+            for ext in &EXTENSIONS {
+                let mut full_path = path.clone();
+                full_path.set_extension(ext);
+                if is_executable(&full_path) {
+                    res.push(full_path);
+                }
+            }
+        }
+    }
+
+    if res.is_empty() { None } else { Some(res) }
 }

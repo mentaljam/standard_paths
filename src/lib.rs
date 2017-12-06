@@ -1,8 +1,17 @@
+#[macro_use]
+mod macros;
+
 #[cfg(unix)]
 mod unix;
 
+#[cfg(unix)]
+use unix::*;
+
 #[cfg(windows)]
 mod windows;
+
+#[cfg(windows)]
+use windows::*;
 
 use std::env;
 use std::path::PathBuf;
@@ -46,6 +55,14 @@ impl StandardLocation {
             organisation_name: String::new()
         }
     }
+
+    pub fn new_with_names(app: &'static str, organisation: &'static str) -> StandardLocation {
+        StandardLocation {
+            app_name: app.into(),
+            organisation_name: organisation.into()
+        }
+    }
+
     fn append_organization_and_app(&self, path: &mut PathBuf) {
         if !self.organisation_name.is_empty() {
             path.push(&self.organisation_name);
@@ -55,18 +72,22 @@ impl StandardLocation {
         }
     }
 
-    pub fn new_with_names(app: &'static str, organisation: &'static str) -> StandardLocation {
-        StandardLocation {
-            app_name: app.into(),
-            organisation_name: organisation.into()
-        }
-    }
-
     pub fn writable_location(&self, location: LocationType) -> Option<PathBuf> {
         self.writable_location_impl(location)
     }
 
     pub fn standard_locations(&self, location: LocationType) -> Option<Vec<PathBuf>> {
         self.standard_locations_impl(location)
+    }
+
+    pub fn find_executable<S>(name: S) -> Option<Vec<PathBuf>>
+    where S: Into<String> {
+        let paths: Vec<PathBuf> = Vec::new();
+        StandardLocation::find_executable_in_paths(name, paths)
+    }
+
+    pub fn find_executable_in_paths<S>(name: S, paths: Vec<PathBuf>) -> Option<Vec<PathBuf>>
+    where S: Into<String> {
+        find_executable_in_paths_impl(name, paths)
     }
 }
