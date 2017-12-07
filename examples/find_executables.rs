@@ -12,12 +12,19 @@ fn main() {
     }
 
     let mut ind: usize = 0;
-    for exe in &args {
-        let len = exe.len();
-        if len < 16 && ind < len {
-            ind = len;
+    let args = {
+        let mut args2 = Vec::new();
+        for exe in &args {
+            if !args2.contains(exe) {
+                args2.push(exe.clone());
+                let len = exe.len();
+                if len < 16 && ind < len {
+                    ind = len;
+                }
+            }
         }
-    }
+        args2
+    };
 
     println!("Searching executables:");
     for exe in args {
