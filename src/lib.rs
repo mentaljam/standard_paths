@@ -14,8 +14,8 @@
 //! use standard_paths::LocationType::*;
 //!
 //! fn main() {
-//!     let sl = StandardPaths::new_with_names("app", "org");
-//!     println!("{:?}", sl.writable_location(AppLocalDataLocation));
+//!     let sp = StandardPaths::new_with_names("app", "org");
+//!     println!("{:?}", sp.writable_location(AppLocalDataLocation));
 //! }
 //! ```
 
@@ -32,7 +32,7 @@ mod windows;
 use windows::*;
 
 use std::env;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 
 /// Enumerates the standard location type.
@@ -124,6 +124,21 @@ pub enum LocationType {
     AppConfigLocation
 }
 
+/// Enumerates the locate option type.
+///
+/// Is used to call
+/// [StandardPaths::locate location](struct.StandardPaths.html#method.locate) and
+/// [StandardPaths::locate_all](struct.StandardPaths.html#method.locate_all).
+#[derive(Debug, Clone, PartialEq)]
+pub enum LocateOption {
+    /// Locate both files and directories (traversing symbolic links).
+    LocateBoth,
+    /// Locate only files.
+    LocateFile,
+    /// Locate only directories.
+    LocateDirectory
+}
+
 /// Stores application and organization names and provides all the crate methods.
 pub struct StandardPaths {
     /// Application name.
@@ -147,7 +162,8 @@ impl StandardPaths {
     }
 
     /// Constructs a new `StandardPaths` with the provided `app` and `organization` names.
-    pub fn new_with_names(app: &'static str, organisation: &'static str) -> StandardPaths {
+    pub fn new_with_names<S>(app: S, organisation: S) -> StandardPaths
+    where S: Into<String> {
         StandardPaths {
             app_name: app.into(),
             organisation_name: organisation.into()
@@ -241,5 +257,62 @@ impl StandardPaths {
     pub fn find_executable_in_paths<S, P>(name: S, paths: P) -> Option<Vec<PathBuf>>
     where S: Into<String>, P: AsRef<Vec<PathBuf>> {
         find_executable_in_paths_impl(name, &paths)
+    }
+
+    /// Search for a file or directory called 'name' in the standard locations.
+    ///
+    /// Returns a full path to the first file or directory found.
+    ///
+    /// Returns [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
+    /// if no such file or directory can be found.
+    ///
+    /// # Arguments
+    /// * `location` - the location type where to search.
+    /// * `name' - the name of the file or directory to search.
+    /// * `option` - the type of entry to search.
+    pub fn locate<P>(&self, location: LocationType, name: P, option: LocateOption) -> Option<PathBuf>
+    where P: AsRef<Path> {
+        let paths = match self.standard_locations(location) {
+            Some(paths) => paths,
+            _ => return None
+        };
+        for mut path in paths {
+            path.push(&name);
+            match &option {
+                &LocateOption::LocateBoth => if path.exists() { return Some(path) },
+                &LocateOption::LocateFile => if path.is_file() { return Some(path) },
+                &LocateOption::LocateDirectory => if path.is_dir() { return Some(path) }
+            }
+        }
+        None
+    }
+
+    /// Search for all files or directories called 'name' in the standard locations.
+    ///
+    /// Returns a vector of full paths to the all files or directories found.
+    ///
+    /// Returns [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
+    /// if no such files or directories can be found.
+    ///
+    /// # Arguments
+    /// * `location` - the location type where to search.
+    /// * `name' - the name of the files or directories to search.
+    /// * `option` - the type of entries to search.
+    pub fn locate_all<P>(&self, location: LocationType, name: P, option: LocateOption) -> Option<Vec<PathBuf>>
+    where P: AsRef<Path> {
+        let paths = match self.standard_locations(location) {
+            Some(paths) => paths,
+            _ => return None
+        };
+        let mut res = Vec::new();
+        for mut path in paths {
+            path.push(&name);
+            match &option {
+                &LocateOption::LocateBoth => if path.exists() { res.push(path); },
+                &LocateOption::LocateFile => if path.is_file() { res.push(path); },
+                &LocateOption::LocateDirectory => if path.is_dir() { res.push(path); }
+            }
+        }
+        if res.is_empty() { None } else { Some(res )}
     }
 }

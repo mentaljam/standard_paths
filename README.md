@@ -10,8 +10,14 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 - writable_location
 - standard_locations
 - find_executable
+- find_executable_in_paths
+- locate
+- locate_all
 
 #### Windows
 - writable_location
 - standard_locations
 - find_executable
+- find_executable_in_paths
+- locate
+- locate_all
