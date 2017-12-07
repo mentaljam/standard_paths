@@ -23,10 +23,10 @@ fn main() {
     for exe in args {
         let fexe = format!("{:>1$}", exe, ind);
         match StandardPaths::find_executable(exe.clone()) {
-            Some(paths) => println!("{}: {}", fexe, paths.iter()
+            Some(paths) => println!("{}: \"{}\"", fexe, paths.iter()
                                                         .map(|p| p.to_str().unwrap())
                                                         .collect::<Vec<_>>()
-                                                        .join(" ")),
+                                                        .join("\", \"")),
             _ => println!("{}: not found", fexe)
         }
     }
