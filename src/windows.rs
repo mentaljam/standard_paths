@@ -201,7 +201,10 @@ impl StandardPaths {
 
             RuntimeLocation | HomeLocation =>  env::home_dir(),
             
-            TempLocation => Some(env::temp_dir()),
+            TempLocation => {
+                let canonicalized = env::temp_dir().canonicalize().unwrap();
+                Some(PathBuf::from(canonicalized.to_str().unwrap().get(4..).unwrap()))
+            },
 
             _ => {
                 let id = match location {
