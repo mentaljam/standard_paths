@@ -144,7 +144,7 @@ pub struct StandardPaths {
     /// Application name.
     app_name: String,
     /// organization name.
-    organisation_name: String
+    org_name: String
 }
 
 impl StandardPaths {
@@ -157,16 +157,16 @@ impl StandardPaths {
                 Ok(name) => name,
                 _ => String::new()
             },
-            organisation_name: String::new()
+            org_name: String::new()
         }
     }
 
     /// Constructs a new `StandardPaths` with the provided `app` and `organization` names.
-    pub fn new_with_names<S>(app: S, organisation: S) -> StandardPaths
+    pub fn new_with_names<S>(app: S, organization: S) -> StandardPaths
     where S: Into<String> {
         StandardPaths {
             app_name: app.into(),
-            organisation_name: organisation.into()
+            org_name: organization.into()
         }
     }
 
@@ -177,8 +177,8 @@ impl StandardPaths {
     /// # Arguments
     /// * `path` - a mutable `PathBuf` to which the app suffix should be appended.
     fn append_organization_and_app(&self, path: &mut PathBuf) {
-        if !self.organisation_name.is_empty() {
-            path.push(&self.organisation_name);
+        if !self.org_name.is_empty() {
+            path.push(&self.org_name);
         }
         if !self.app_name.is_empty() {
             path.push(&self.app_name);
