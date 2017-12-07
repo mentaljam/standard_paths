@@ -11,9 +11,19 @@ macro_rules! check_paths {
         $paths.retain(|p| !p.to_str().unwrap().is_empty() && p.is_dir());
         let $paths = {
             let mut paths2 = Vec::new();
-            for path in $paths {
+            for mut path in $paths {
+                // Remove '\\?\' prefix on Windows
+                #[cfg(windows)]
+                {
+                    let canonicalized = path.canonicalize().unwrap();
+                    path = PathBuf::from(canonicalized.to_str().unwrap().get(4..).unwrap());
+                };
+                #[cfg(not(windows))]
+                {
+                    path = path.canonicalize().unwrap();
+                }
                 if !paths2.contains(&path) {
-                    paths2.push(path.canonicalize().unwrap());
+                    paths2.push(path);
                 }
             }
             paths2
