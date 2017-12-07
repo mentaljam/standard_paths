@@ -79,10 +79,10 @@ impl StandardPaths {
         match location {
             LocationType::HomeLocation => env::home_dir(),
             LocationType::TempLocation => Some(env::temp_dir()),
-            LocationType::CacheLocation | LocationType::GenericCacheLocation => {
+            LocationType::AppCacheLocation | LocationType::GenericCacheLocation => {
                 // http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html
                 let mut path = get_var_or_home!("XDG_CACHE_HOME", ".cache");
-                if location == LocationType::CacheLocation {
+                if location == LocationType::AppCacheLocation {
                     self.append_organization_and_app(&mut path);
                 }
                 Some(path)

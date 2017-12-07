@@ -186,10 +186,10 @@ impl StandardPaths {
                 })
             },
 
-            CacheLocation | GenericCacheLocation => {
+            AppCacheLocation | GenericCacheLocation => {
                 // FOLDERID_InternetCache points to IE's cache. Most applications seem to
                 // be using a cache directory located in their AppData directory.
-                let loc2 = if location == CacheLocation { AppLocalDataLocation } else { GenericDataLocation };
+                let loc2 = if location == AppCacheLocation { AppLocalDataLocation } else { GenericDataLocation };
                 match self.writable_location(loc2) {
                     Some(mut path) => {
                         path.push("cache");

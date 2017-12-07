@@ -111,7 +111,7 @@ pub enum LocationType {
     /// The user-specific cached data directory.
     ///
     /// This is an application-specific directory.
-    CacheLocation,
+    AppCacheLocation,
     /// The user-specific configuration files directory.
     ///
     /// This may be either a generic value or application-specific.

@@ -5,25 +5,25 @@ use standard_paths::LocationType::*;
 
 fn main() {
     let locations = vec![
+        ("Home",            HomeLocation),
         ("Desktop",         DesktopLocation),
         ("Documents",       DocumentsLocation),
-        ("Fonts",           FontsLocation),
-        ("Applications",    ApplicationsLocation),
-        ("Music",           MusicLocation),
-        ("Movies",          MoviesLocation),
-        ("Pictures",        PicturesLocation),
-        ("Temp",            TempLocation),
-        ("Home",            HomeLocation),
-        ("Cache",           CacheLocation),
-        ("Generic Data",    GenericDataLocation),
-        ("Runtime",         RuntimeLocation),
-        ("Config",          ConfigLocation),
         ("Download",        DownloadLocation),
-        ("Generic Cache",   GenericCacheLocation),
-        ("Generic Config",  GenericConfigLocation),
+        ("Movies",          MoviesLocation),
+        ("Music",           MusicLocation),
+        ("Pictures",        PicturesLocation),
+        ("Applications",    ApplicationsLocation),
+        ("Fonts",           FontsLocation),
+        ("Runtime",         RuntimeLocation),
+        ("Temp",            TempLocation),
+        ("Generic Data",    GenericDataLocation),
         ("App Data",        AppDataLocation),
-        ("App Config",      AppConfigLocation),
-        ("App Local Data",  AppLocalDataLocation)
+        ("App Local Data",  AppLocalDataLocation),
+        ("Generic Cache",   GenericCacheLocation),
+        ("App Cache",       AppCacheLocation),
+        ("Config",          ConfigLocation),
+        ("Generic Config",  GenericConfigLocation),
+        ("App Config",      AppConfigLocation)
     ];
 
     let sl = StandardPaths::new_with_names("app", "org");
