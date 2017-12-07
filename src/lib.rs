@@ -268,7 +268,7 @@ impl StandardPaths {
     ///
     /// # Arguments
     /// * `location` - the location type where to search.
-    /// * `name' - the name of the file or directory to search.
+    /// * `name` - the name of the file or directory to search.
     /// * `option` - the type of entry to search.
     pub fn locate<P>(&self, location: LocationType, name: P, option: LocateOption) -> Option<PathBuf>
     where P: AsRef<Path> {
@@ -296,7 +296,7 @@ impl StandardPaths {
     ///
     /// # Arguments
     /// * `location` - the location type where to search.
-    /// * `name' - the name of the files or directories to search.
+    /// * `name` - the name of the files or directories to search.
     /// * `option` - the type of entries to search.
     pub fn locate_all<P>(&self, location: LocationType, name: P, option: LocateOption) -> Option<Vec<PathBuf>>
     where P: AsRef<Path> {
