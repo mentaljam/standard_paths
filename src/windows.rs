@@ -16,7 +16,7 @@ use self::winapi::um::winbase::GetBinaryTypeW;
 
 use ::LocationType;
 use ::LocationType::*;
-use ::StandardLocation;
+use ::StandardPaths;
 
 
 /// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Desktop
@@ -171,7 +171,7 @@ macro_rules! sh_get_known_folder_path {
     }};
 }
 
-impl StandardLocation {
+impl StandardPaths {
 
     #[inline]
     #[doc(hidden)]

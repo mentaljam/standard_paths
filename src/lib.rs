@@ -40,14 +40,14 @@ pub enum LocationType {
     AppLocalDataLocation
 }
 
-pub struct StandardLocation {
+pub struct StandardPaths {
     app_name: String,
     organisation_name: String
 }
 
-impl StandardLocation {
-    pub fn new() -> StandardLocation {
-        StandardLocation {
+impl StandardPaths {
+    pub fn new() -> StandardPaths {
+        StandardPaths {
             app_name: match env::var("CARGO_PKG_NAME") {
                 Ok(name) => name,
                 _ => String::new()
@@ -56,8 +56,8 @@ impl StandardLocation {
         }
     }
 
-    pub fn new_with_names(app: &'static str, organisation: &'static str) -> StandardLocation {
-        StandardLocation {
+    pub fn new_with_names(app: &'static str, organisation: &'static str) -> StandardPaths {
+        StandardPaths {
             app_name: app.into(),
             organisation_name: organisation.into()
         }
@@ -83,7 +83,7 @@ impl StandardLocation {
     pub fn find_executable<S>(name: S) -> Option<Vec<PathBuf>>
     where S: Into<String> {
         let paths: Vec<PathBuf> = Vec::new();
-        StandardLocation::find_executable_in_paths(name, paths)
+        StandardPaths::find_executable_in_paths(name, paths)
     }
 
     pub fn find_executable_in_paths<S>(name: S, paths: Vec<PathBuf>) -> Option<Vec<PathBuf>>

@@ -22,7 +22,7 @@ fn main() {
     println!("Searching executables:");
     for exe in args {
         let fexe = format!("{:>1$}", exe, ind);
-        match StandardLocation::find_executable(exe.clone()) {
+        match StandardPaths::find_executable(exe.clone()) {
             Some(paths) => println!("{}: {}", fexe, paths.iter()
                                                         .map(|p| p.to_str().unwrap())
                                                         .collect::<Vec<_>>()

@@ -14,7 +14,7 @@ use std::io::BufReader;
 use std::collections::HashMap;
 
 use ::LocationType;
-use ::StandardLocation;
+use ::StandardPaths;
 
 
 macro_rules! get_var_or_home {
@@ -70,7 +70,7 @@ fn xdg_data_dirs() -> Vec<PathBuf> {
     }
 }
 
-impl StandardLocation {
+impl StandardPaths {
     
     #[inline]
     #[doc(hidden)]

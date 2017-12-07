@@ -26,7 +26,7 @@ fn main() {
         ("App Local Data",  AppLocalDataLocation)
     ];
 
-    let sl = StandardLocation::new_with_names("app", "org");
+    let sl = StandardPaths::new_with_names("app", "org");
     
     println!("\nListing standard locations:");
     for &(ref name, ref value) in &locations {
