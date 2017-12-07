@@ -19,9 +19,6 @@
 //! }
 //! ```
 
-#[macro_use]
-mod macros;
-
 #[cfg(unix)]
 mod unix;
 
@@ -220,7 +217,12 @@ impl StandardPaths {
     /// which should be checked to be executable.
     pub fn find_executable<S>(name: S) -> Option<Vec<PathBuf>>
     where S: Into<String> {
-        let paths: Vec<PathBuf> = Vec::new();
+        // Read system paths
+        let path_var = match env::var("PATH") {
+            Ok(var) => var,
+            _ => return None
+        };
+        let paths: Vec<PathBuf> = env::split_paths(&path_var).collect();
         StandardPaths::find_executable_in_paths(name, paths)
     }
 
@@ -236,8 +238,8 @@ impl StandardPaths {
     /// * `name` - the name of the searched executable or an absolute path
     /// which should be checked to be executable.
     /// * `paths` - the directories where to search for the executable.
-    pub fn find_executable_in_paths<S>(name: S, paths: Vec<PathBuf>) -> Option<Vec<PathBuf>>
-    where S: Into<String> {
-        find_executable_in_paths_impl(name, paths)
+    pub fn find_executable_in_paths<S, P>(name: S, paths: P) -> Option<Vec<PathBuf>>
+    where S: Into<String>, P: AsRef<Vec<PathBuf>> {
+        find_executable_in_paths_impl(name, &paths)
     }
 }

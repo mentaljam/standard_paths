@@ -328,8 +328,8 @@ const EXTENSIONS: [&'static str; 3] = ["bin", "run", "sh"];
 
 #[inline]
 #[doc(hidden)]
-pub fn find_executable_in_paths_impl<S>(name: S, paths: Vec<PathBuf>) -> Option<Vec<PathBuf>>
-where S: Into<String> {
+pub fn find_executable_in_paths_impl<S, P>(name: S, paths: P) -> Option<Vec<PathBuf>>
+where S: Into<String>, P: AsRef<Vec<PathBuf>> {
     let name = name.into();
     let path = PathBuf::from(&name);
 
@@ -338,9 +338,19 @@ where S: Into<String> {
         return Some(vec![path])
     }
 
-    // Read system paths if not provided
-    let mut paths = paths;
-    check_paths!(paths);
+    // Check paths
+    let mut paths = paths.as_ref().clone();
+    paths.retain(|p| !p.to_str().unwrap().is_empty() && p.is_dir());
+    let paths = {
+        let mut paths2 = Vec::new();
+        for path in paths {
+            let path = path.canonicalize().unwrap();
+            if !paths2.contains(&path) {
+                paths2.push(path);
+            }
+        }
+        paths2
+    };
 
     // At first search the provided name
     let mut res = Vec::new();
