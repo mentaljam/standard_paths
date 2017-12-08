@@ -25,3 +25,26 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 - find_executable_in_paths
 - locate
 - locate_all
+
+### Usage
+
+#### Cargo.toml
+
+```toml
+[dependencies]
+standard_paths = "0.3.1"
+```
+
+#### main.rs
+
+```rust
+extern crate standard_paths;
+
+use standard_paths::*;
+use standard_paths::LocationType::*;
+
+fn main() {
+    let sp = StandardPaths::new_with_names("app", "org");
+    println!("App data location: {:?}", sp.writable_location(AppLocalDataLocation));
+}
+```

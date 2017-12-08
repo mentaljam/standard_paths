@@ -21,4 +21,4 @@ shell32-sys = "0.1.1"
 kernel32-sys = "0.2.1"
 
 [dev_dependencies]
-argparse = "*"
+argparse = "0.2.1"
