@@ -4,7 +4,9 @@ A Rust library providing methods for accessing standard paths on the local files
 
 It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) class of the Qt framework.
 
-##### [Documentation](https://docs.rs/standard_paths)
+[![Crates Version](https://img.shields.io/crates/v/standard_paths.svg)](https://crates.io/crates/standard_paths)
+[![Crates Downloads](https://img.shields.io/crates/d/standard_paths.svg)](https://crates.io/crates/standard_paths)
+[![Documentation](https://docs.rs/standard_paths/badge.svg)](https://docs.rs/standard_paths)
 
 ### Currently implemented for Unix and Windows
 
