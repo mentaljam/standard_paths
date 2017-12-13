@@ -10,7 +10,7 @@ use std::fs;
 use std::os::linux::fs::MetadataExt;
 use std::os::unix::fs::PermissionsExt;
 use std::io::prelude::*;
-use std::io::BufReader;
+use std::io::{BufReader, Error, ErrorKind};
 use std::collections::HashMap;
 
 use ::LocationType;
@@ -28,7 +28,7 @@ macro_rules! get_var_or_home {
                     )*
                     path
                 },
-                _ => return None
+                _ => return Err(StandardPaths::home_dir_err())
             }
         };
     }
@@ -74,18 +74,18 @@ impl StandardPaths {
     
     #[inline]
     #[doc(hidden)]
-    pub fn writable_location_impl(&self, location: LocationType) -> Option<PathBuf> {
+    pub fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
 
         match location {
-            LocationType::HomeLocation => env::home_dir(),
-            LocationType::TempLocation => Some(env::temp_dir()),
+            LocationType::HomeLocation => env::home_dir().ok_or(StandardPaths::home_dir_err()),
+            LocationType::TempLocation => Ok(env::temp_dir()),
             LocationType::AppCacheLocation | LocationType::GenericCacheLocation => {
                 // http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html
                 let mut path = get_var_or_home!("XDG_CACHE_HOME", ".cache");
                 if location == LocationType::AppCacheLocation {
                     self.append_organization_and_app(&mut path);
                 }
-                Some(path)
+                Ok(path)
             },
 
             LocationType::AppDataLocation | 
@@ -96,7 +96,7 @@ impl StandardPaths {
                    location == LocationType::AppLocalDataLocation {
                     self.append_organization_and_app(&mut path);
                 }
-                Some(path)
+                Ok(path)
             },
 
             LocationType::ConfigLocation |
@@ -107,7 +107,7 @@ impl StandardPaths {
                 if location == LocationType::AppConfigLocation {
                     self.append_organization_and_app(&mut path);
                 }
-                Some(path)
+                Ok(path)
             },
 
             LocationType::RuntimeLocation => {
@@ -115,16 +115,10 @@ impl StandardPaths {
                 let user = get_user_by_uid(get_current_uid()).unwrap();
                 let (path, md) = match env::var("XDG_RUNTIME_DIR") {
                     Ok(path) => {
-                        let md = match fs::metadata(&path) {
-                            Ok(md) => md,
-                            Err(err) => {
-                                eprintln!("Couldn't open '{}' from XDG_RUNTIME_DIR: {}", path, err);
-                                return None;
-                            }
-                        };
+                        let md = fs::metadata(&path)?;
                         if !md.is_dir() {
-                            eprintln!("XDG_RUNTIME_DIR points to '{}' which is not a directory", path);
-                            return None;
+                            return Err(Error::new(ErrorKind::Other,
+                                format!("'XDG_RUNTIME_DIR' points to '{}' which is not a directory", path)))
                         }
                         (PathBuf::from(path), md)
                     },
@@ -133,35 +127,19 @@ impl StandardPaths {
                         runtime_dir.push_str(user.name());
                         let mut path = env::temp_dir();
                         path.push(runtime_dir);
-                        let md = match fs::metadata(&path) {
-                            Ok(md) => {
-                                if !md.is_dir() {
-                                    match fs::create_dir_all(&path) {
-                                        Err(err) => {
-                                            eprintln!("Error creating runtime directory {:?}: {}",
-                                                      path, err);
-                                            return None;
-                                        },
-                                        _ => ()
-                                    }
-                                }
-                                md
-                            },
-                            Err(err) => {
-                                eprintln!("Couldn't open runtime directory {:?}: {}", path, err);
-                                return None;
-                            }
-                        };
-                        println!("XDG_RUNTIME_DIR not set, defaulting to {:?}", path);
+                        let md = fs::metadata(&path)?;
+                        if !md.is_dir() {
+                            fs::create_dir_all(&path)?;
+                        }
                         (PathBuf::from(path), md)
                     }
                 };
 
                 // The directory MUST be owned by the user
                 if md.st_uid() != user.uid() {
-                    eprintln!("Wrong ownership on runtime directory {:?}, {} instead of {}",
-                              path, md.st_uid(), user.uid());
-                    return None;
+                    return Err(Error::new(ErrorKind::PermissionDenied,
+                        format!("Wrong ownership on runtime directory '{}' - {} instead of {}",
+                                path.to_str().unwrap(), md.st_uid(), user.uid())))
                 }
                 // And its Unix access mode MUST be 0700.
                 let mut permissions = md.permissions();
@@ -169,7 +147,7 @@ impl StandardPaths {
                     permissions.set_mode(0o40700);
                 }
 
-                Some(path)
+                Ok(path)
             },
 
             LocationType::FontsLocation | LocationType::ApplicationsLocation => {
@@ -178,25 +156,16 @@ impl StandardPaths {
                 } else {
                     "applications"
                 };
-                let mut path = match self.writable_location_impl(LocationType::GenericDataLocation) {
-                    Some(path) => path,
-                    _ => return None
-                };
+                let mut path = self.writable_location_impl(LocationType::GenericDataLocation)?;
                 path.push(dir);
-                Some(path)
+                Ok(path)
             },
             
             _ => {
                 // http://www.freedesktop.org/wiki/Software/xdg-user-dirs
                 let mut config = get_var_or_home!("XDG_CONFIG_HOME", ".config");
                 config.push("user-dirs.dirs");
-                let file = match fs::File::open(&config) {
-                    Ok(file) => file,
-                    Err(err) => {
-                        eprintln!("Couldn't open {:?}: {}", config, err);
-                        return None
-                    }
-                };
+                let file = fs::File::open(&config)?;
                 let buf_reader = BufReader::new(file);
                 let mut lines = HashMap::new();
                 for line in buf_reader.lines() {
@@ -207,10 +176,9 @@ impl StandardPaths {
                         let key = parts[0].get(4..key.len() - 4).unwrap();
                         let mut value = parts[1];
                         if value.len() > 2 &&
-                           value.starts_with('"') &&
-                           value.ends_with('"') {
-                               value = value.get(1..value.len() - 1).unwrap();
-                           }
+                           value.starts_with('"') && value.ends_with('"') {
+                            value = value.get(1..value.len() - 1).unwrap();
+                        }
                         lines.insert(key.to_string(), value.to_string());
                     }
                 }
@@ -227,16 +195,15 @@ impl StandardPaths {
                 if lines.contains_key(key) {
                     let value = &lines[key];
                     if value.starts_with("$HOME") {
-                        match env::home_dir() {
-                            Some(mut path) => {
-                                let value = value.get(6..).unwrap();
-                                path.push(value);
-                                return Some(path);
-                            },
-                            _ => return None
-                        }
+                        let mut path = match env::home_dir() {
+                            Some(path) => path,
+                            _ => return Err(StandardPaths::home_dir_err())
+                        };
+                        let value = value.get(6..).unwrap();
+                        path.push(value);
+                        return Ok(path)
                     }
-                    return Some(value.into());
+                    return Ok(value.into())
                 }
 
                 let dir = match location {
@@ -246,24 +213,21 @@ impl StandardPaths {
                     LocationType::MusicLocation     => "Music",
                     LocationType::MoviesLocation    => "Videos",
                     LocationType::DownloadLocation  => "Downloads",
-                    _ => ""
+                    _ => return Err(Error::new(ErrorKind::Other, "Unexpected error"))
                 };
-                if dir.is_empty() {
-                    return None
-                }
                 let mut path = match env::home_dir() {
                     Some(path) => path,
-                    _ => return None
+                    _ => return Err(StandardPaths::home_dir_err())
                 };
                 path.push(dir);
-                Some(path)
+                Ok(path)
             }
         }
     }
 
     #[inline]
     #[doc(hidden)]
-    pub fn standard_locations_impl(&self, location: LocationType) -> Option<Vec<PathBuf>> {
+    pub fn standard_locations_impl(&self, location: LocationType) -> Result<Vec<PathBuf>, Error> {
         let mut res: Vec<PathBuf> = match location {
 
             LocationType::ConfigLocation |
@@ -300,18 +264,16 @@ impl StandardPaths {
                     path.push(".fonts");
                     vec![path]
                 },
-                _ => return None
+                _ => return Err(StandardPaths::home_dir_err())
             },
 
             _ => Vec::new()
         };
 
-        match self.writable_location_impl(location) {
-            Some(path) => res.insert(0, path),
-            _ => ()
-        }
+        let path = self.writable_location_impl(location)?;
+        res.insert(0, path);
 
-        Some(res)
+        Ok(res)
     }
 }
 

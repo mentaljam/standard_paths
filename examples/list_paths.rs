@@ -31,20 +31,20 @@ fn main() {
     println!("\nListing standard locations:");
     for &(ref name, ref value) in &locations {
         match sl.standard_locations(value.clone()) {
-            Some(paths) => println!("{:>14}: \"{}\"", name, paths.iter()
+            Ok(paths) => println!("{:>14}: \"{}\"", name, paths.iter()
                                                                 .map(|p| p.to_str().unwrap())
                                                                 .collect::<Vec<_>>()
                                                                 .join("\", \"")
                                                                 ),
-            _ => println!("{:>14}: None", name)
+            Err(err) => println!("{:>14}: {}", name, err)
         }
     }
 
     println!("\nListing writable locations:");
     for &(ref name, ref value) in &locations {
         match sl.writable_location(value.clone()) {
-            Some(path) => println!("{:>14}: \"{}\"", name, path.to_str().unwrap()),
-            _ => println!("{:>14}: None", name)
+            Ok(path) => println!("{:>14}: \"{}\"", name, path.to_str().unwrap()),
+            Err(err) => println!("{:>14}: {}", name, err)
         }
     }
 }

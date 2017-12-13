@@ -9,6 +9,7 @@ use std::ptr;
 use std::slice;
 use std::ffi::{OsStr, OsString};
 use std::os::windows::ffi::{OsStrExt, OsStringExt};
+use std::io::{Error, ErrorKind};
 
 // use self::winapi::shared::guiddef::GUID;
 // use self::winapi::um::winnt::PWSTR;
@@ -185,12 +186,12 @@ impl StandardPaths {
 
     #[inline]
     #[doc(hidden)]
-    pub fn writable_location_impl(&self, location: LocationType) -> Option<PathBuf> {
+    pub fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
         match location {
 
             DownloadLocation => {
                 sh_get_known_folder_path!(FOLDERID_Downloads, path, {
-                    Some(path)
+                    Ok(path)
                 }, {
                     self.writable_location(DocumentsLocation)
                 })
@@ -200,20 +201,16 @@ impl StandardPaths {
                 // FOLDERID_InternetCache points to IE's cache. Most applications seem to
                 // be using a cache directory located in their AppData directory.
                 let loc2 = if location == AppCacheLocation { AppLocalDataLocation } else { GenericDataLocation };
-                match self.writable_location(loc2) {
-                    Some(mut path) => {
-                        path.push("cache");
-                        Some(path)
-                    },
-                    _ => None
-                }
+                let mut path = self.writable_location(loc2)?;
+                path.push("cache");
+                Ok(path)
             },
 
-            RuntimeLocation | HomeLocation =>  env::home_dir(),
+            RuntimeLocation | HomeLocation => env::home_dir().ok_or(StandardPaths::home_dir_err()),
             
             TempLocation => {
                 let canonicalized = env::temp_dir().canonicalize().unwrap();
-                Some(PathBuf::from(canonicalized.to_str().unwrap().get(4..).unwrap()))
+                Ok(PathBuf::from(canonicalized.to_str().unwrap().get(4..).unwrap()))
             },
 
             _ => {
@@ -225,12 +222,10 @@ impl StandardPaths {
                     MusicLocation         => FOLDERID_Music,
                     MoviesLocation        => FOLDERID_Videos,
                     PicturesLocation      => FOLDERID_Pictures,
-                    AppLocalDataLocation  => FOLDERID_LocalAppData,
-                    GenericDataLocation   => FOLDERID_LocalAppData,
-                    ConfigLocation        => FOLDERID_LocalAppData,
-                    GenericConfigLocation => FOLDERID_LocalAppData,
+                    AppLocalDataLocation | GenericDataLocation |
+                        ConfigLocation   | GenericConfigLocation |
+                        AppConfigLocation => FOLDERID_LocalAppData,
                     AppDataLocation       => FOLDERID_RoamingAppData,
-                    AppConfigLocation     => FOLDERID_LocalAppData,
                     _ => GUID {
                         Data1: 0x0, Data2: 0x0, Data3: 0x0,
                         Data4: [0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0]
@@ -241,9 +236,9 @@ impl StandardPaths {
                        location == AppDataLocation || location == AppLocalDataLocation {
                         self.append_organization_and_app(&mut path);
                     }
-                    Some(path)
+                    Ok(path)
                 }, {
-                    None
+                    Err(Error::new(ErrorKind::Other, "Unexpected error"))
                 })
             }
         }
@@ -251,12 +246,10 @@ impl StandardPaths {
     
     #[inline]
     #[doc(hidden)]
-    pub fn standard_locations_impl(&self, location: LocationType) -> Option<Vec<PathBuf>> {
+    pub fn standard_locations_impl(&self, location: LocationType) -> Result<Vec<PathBuf>, Error> {
         let mut dirs = Vec::new();
-        match self.writable_location(location.clone()) {
-            Some(path) => dirs.push(path),
-            _ => ()
-        }
+        let path = self.writable_location(location.clone())?;
+        dirs.push(path);
         if location == ConfigLocation  || location == AppConfigLocation ||
            location == AppDataLocation || location == AppLocalDataLocation ||
            location == GenericConfigLocation || location == GenericDataLocation {
@@ -266,22 +259,18 @@ impl StandardPaths {
                 }
                 dirs.push(path);
             }, {});
-            match env::current_exe() {
-                Ok(path) => {
-                    match path.parent() {
-                        Some(parent) => {
-                            let mut parent: PathBuf = parent.into();
-                            dirs.push(parent.clone());
-                            parent.push("data");
-                            dirs.push(parent);
-                        },
-                        _ => ()
-                    }
+            let path = env::current_exe()?;
+            match path.parent() {
+                Some(parent) => {
+                    let mut parent: PathBuf = parent.into();
+                    dirs.push(parent.clone());
+                    parent.push("data");
+                    dirs.push(parent);
                 },
                 _ => ()
             }
         }
-        Some(dirs)
+        Ok(dirs)
     }
 }
 

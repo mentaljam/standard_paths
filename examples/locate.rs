@@ -75,22 +75,34 @@ fn main() {
     let sp = StandardPaths::new_with_names(app_name, org_name);
     if locate_all {
         match sp.locate_all(location, &file, option) {
-            Some(paths) => {
-                println!("\"{}\"", paths.iter()
-                                       .map(|p| p.to_str().unwrap())
-                                       .collect::<Vec<_>>()
-                                       .join("\", \""));
-                process::exit(0)
+            Ok(paths) => {
+                if paths.is_some() {
+                    println!("\"{}\"", paths
+                                            .unwrap()
+                                            .iter()
+                                            .map(|p| p.to_str().unwrap())
+                                            .collect::<Vec<_>>()
+                                            .join("\", \""));
+                    process::exit(0)
+                }
             },
-            _ => ()
+            Err(err) => {
+                eprintln!("{}", err);
+                process::exit(2)
+            }
         }
     } else {
         match sp.locate(location, &file, option) {
-            Some(path) => {
-                println!("\"{}\"", path.to_str().unwrap());
-                process::exit(0)
+            Ok(path) => {
+                if path.is_some() {
+                    println!("\"{}\"", path.unwrap().to_str().unwrap());
+                    process::exit(0)
+                }
             },
-            _ => ()
+            Err(err) => {
+                eprintln!("{}", err);
+                process::exit(2)
+            }
         }
     }
     

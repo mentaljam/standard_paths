@@ -33,6 +33,7 @@ use windows::*;
 
 use std::env;
 use std::path::{Path, PathBuf};
+use std::io::{Error, ErrorKind};
 
 
 /// Enumerates the standard location type.
@@ -194,7 +195,7 @@ impl StandardPaths {
     ///
     /// # Arguments
     /// * `location` - location type.
-    pub fn writable_location(&self, location: LocationType) -> Option<PathBuf> {
+    pub fn writable_location(&self, location: LocationType) -> Result<PathBuf, Error> {
         self.writable_location_impl(location)
     }
 
@@ -209,7 +210,7 @@ impl StandardPaths {
     ///
     /// # Arguments
     /// * `location` - location type.
-    pub fn standard_locations(&self, location: LocationType) -> Option<Vec<PathBuf>> {
+    pub fn standard_locations(&self, location: LocationType) -> Result<Vec<PathBuf>, Error> {
         self.standard_locations_impl(location)
     }
 
@@ -270,21 +271,18 @@ impl StandardPaths {
     /// * `location` - the location type where to search.
     /// * `name` - the name of the file or directory to search.
     /// * `option` - the type of entry to search.
-    pub fn locate<P>(&self, location: LocationType, name: P, option: LocateOption) -> Option<PathBuf>
+    pub fn locate<P>(&self, location: LocationType, name: P, option: LocateOption) -> Result<Option<PathBuf>, Error>
     where P: AsRef<Path> {
-        let paths = match self.standard_locations(location) {
-            Some(paths) => paths,
-            _ => return None
-        };
+        let paths = self.standard_locations(location)?;
         for mut path in paths {
             path.push(&name);
             match &option {
-                &LocateOption::LocateBoth => if path.exists() { return Some(path) },
-                &LocateOption::LocateFile => if path.is_file() { return Some(path) },
-                &LocateOption::LocateDirectory => if path.is_dir() { return Some(path) }
+                &LocateOption::LocateBoth => if path.exists() { return Ok(Some(path)) },
+                &LocateOption::LocateFile => if path.is_file() { return Ok(Some(path)) },
+                &LocateOption::LocateDirectory => if path.is_dir() { return Ok(Some(path)) }
             }
         }
-        None
+        Ok(None)
     }
 
     /// Search for all files or directories called 'name' in the standard locations.
@@ -298,12 +296,9 @@ impl StandardPaths {
     /// * `location` - the location type where to search.
     /// * `name` - the name of the files or directories to search.
     /// * `option` - the type of entries to search.
-    pub fn locate_all<P>(&self, location: LocationType, name: P, option: LocateOption) -> Option<Vec<PathBuf>>
+    pub fn locate_all<P>(&self, location: LocationType, name: P, option: LocateOption) -> Result<Option<Vec<PathBuf>>, Error>
     where P: AsRef<Path> {
-        let paths = match self.standard_locations(location) {
-            Some(paths) => paths,
-            _ => return None
-        };
+        let paths = self.standard_locations(location)?;
         let mut res = Vec::new();
         for mut path in paths {
             path.push(&name);
@@ -313,6 +308,11 @@ impl StandardPaths {
                 &LocateOption::LocateDirectory => if path.is_dir() { res.push(path); }
             }
         }
-        if res.is_empty() { None } else { Some(res )}
+        if res.is_empty() { Ok(None) } else { Ok(Some(res)) }
+    }
+
+    #[inline]
+    fn home_dir_err() -> Error {
+        Error::new(ErrorKind::Other, "Error getting HOME directory")
     }
 }
