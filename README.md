@@ -6,23 +6,14 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 
 ##### [Documentation](https://docs.rs/standard_paths)
 
-### Currently implemented
+### Currently implemented for Unix and Windows
 
-#### Unix
-- writable_location
-- standard_locations
-- find_executable
-- find_executable_in_paths
-- locate
-- locate_all
-
-#### Windows
-- writable_location
-- standard_locations
-- find_executable
-- find_executable_in_paths
-- locate
-- locate_all
+- [writable_location](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.writable_location)
+- [standard_locations](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.standard_locations)
+- [find_executable](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.find_executable)
+- [find_executable_in_paths](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.find_executable_in_paths)
+- [locate](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.locate)
+- [locate_all](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.locate_all)
 
 ### Usage
 
@@ -30,7 +21,7 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 
 ```toml
 [dependencies]
-standard_paths = "0.3.1"
+standard_paths = "^0.3"
 ```
 
 #### main.rs
