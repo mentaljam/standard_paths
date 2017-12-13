@@ -1,7 +1,7 @@
 [package]
 name = "standard_paths"
 description = "A port of QStandardPaths class which provides methods for accessing system standard paths."
-version = "0.3.1"
+version = "0.4.0"
 authors = ["Petr Tsymbarovich <petr@tsymbarovich.ru>"]
 repository = "https://github.com/mentaljam/standard_paths"
 keywords = ["system", "standard", "paths"]
