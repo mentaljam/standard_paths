@@ -23,7 +23,7 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 
 ```toml
 [dependencies]
-standard_paths = "^0.3"
+standard_paths = "^0.4"
 ```
 
 #### main.rs
