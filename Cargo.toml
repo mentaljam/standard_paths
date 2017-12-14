@@ -1,7 +1,7 @@
 [package]
 name = "standard_paths"
 description = "A port of QStandardPaths class which provides methods for accessing standard paths on the local filesystem (config, cache, user directories and etc.)."
-version = "0.4.2"
+version = "0.4.3"
 authors = ["Petr Tsymbarovich <petr@tsymbarovich.ru>"]
 repository = "https://github.com/mentaljam/standard_paths"
 documentation = "https://docs.rs/standard_paths"

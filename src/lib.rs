@@ -190,7 +190,7 @@ impl StandardPaths {
     ///
     /// Note: the returned path can be a directory that does not exist.
     ///
-    /// Returns [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
+    /// Returns [Error](https://doc.rust-lang.org/std/io/struct.Error.html)
     /// if the location cannot be determined.
     ///
     /// # Arguments
@@ -205,8 +205,9 @@ impl StandardPaths {
     /// [self.writable location](struct.StandardPaths.html#method.writable_location)
     /// if it can be determined.
     ///
-    /// Returns [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
-    /// if no locations for the provided type are defined.
+    /// Returns [Error](https://doc.rust-lang.org/std/io/struct.Error.html)
+    /// if the locations cannot be determined or an empty vector if no locations
+    /// for the provided type are defined.
     ///
     /// # Arguments
     /// * `location` - location type.
@@ -264,7 +265,9 @@ impl StandardPaths {
     ///
     /// Returns a full path to the first file or directory found.
     ///
-    /// Returns [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
+    /// Returns [Error](https://doc.rust-lang.org/std/io/struct.Error.html)
+    /// if accessing the `location` failed or
+    /// [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
     /// if no such file or directory can be found.
     ///
     /// # Arguments
@@ -289,7 +292,9 @@ impl StandardPaths {
     ///
     /// Returns a vector of full paths to the all files or directories found.
     ///
-    /// Returns [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
+    /// Returns [Error](https://doc.rust-lang.org/std/io/struct.Error.html)
+    /// if accessing the `location` failed or
+    /// [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
     /// if no such files or directories can be found.
     ///
     /// # Arguments
