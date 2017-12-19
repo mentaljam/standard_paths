@@ -19,11 +19,11 @@
 //! }
 //! ```
 
-#[cfg(unix)]
-mod unix;
+#[cfg(target_os = "linux")]
+mod linux;
 
-#[cfg(unix)]
-use unix::*;
+#[cfg(target_os = "linux")]
+use linux::*;
 
 #[cfg(windows)]
 mod windows;
@@ -48,7 +48,7 @@ use std::io::{Error, ErrorKind};
 pub enum LocationType {
     /// The user's home directory.
     ///
-    /// * On Unix systems it's equal to the `$HOME` environment variable.
+    /// * On Linux systems it's equal to the `$HOME` environment variable.
     /// * On the last Windows operating systems it's equal to the `%HomePath%`
     /// environment variable.
     HomeLocation,

@@ -8,7 +8,7 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 [![Crates Downloads](https://img.shields.io/crates/d/standard_paths.svg)](https://crates.io/crates/standard_paths)
 [![Documentation](https://docs.rs/standard_paths/badge.svg)](https://docs.rs/standard_paths)
 
-### Currently implemented for Unix and Windows
+### Currently implemented for Linux and Windows
 
 - [writable_location](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.writable_location)
 - [standard_locations](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.standard_locations)
