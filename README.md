@@ -17,6 +17,10 @@ It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html) clas
 - [locate](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.locate)
 - [locate_all](https://docs.rs/standard_paths/~0/standard_paths/struct.StandardPaths.html#method.locate_all)
 
+### macOS support
+
+macOS is currently unsupported. If you want to help with macOS feel free to contribute!
+
 ### Usage
 
 #### Cargo.toml
