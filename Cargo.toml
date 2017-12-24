@@ -1,7 +1,7 @@
 [package]
 name = "standard_paths"
 description = "A port of QStandardPaths class which provides methods for accessing standard paths on the local filesystem (config, cache, user directories and etc.)."
-version = "0.4.4"
+version = "0.4.5"
 authors = ["Petr Tsymbarovich <petr@tsymbarovich.ru>"]
 repository = "https://github.com/mentaljam/standard_paths"
 documentation = "https://docs.rs/standard_paths"
@@ -14,8 +14,7 @@ readme = "README.md"
 users = "0.5.0"
 
 [target.'cfg(windows)'.dependencies]
-# winapi = { features = ["shlobj", "combaseapi", "winbase"], git = "https://github.com/retep998/winapi-rs", rev = "d51e532" }
-winapi = "0.2"
+winapi = { version = "0.3", features = ["shlobj", "combaseapi", "winbase"] }
 ole32-sys = "0.2.0"
 shell32-sys = "0.1.1"
 kernel32-sys = "0.2.1"

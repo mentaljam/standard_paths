@@ -1,7 +1,4 @@
 extern crate winapi;
-extern crate ole32;
-extern crate shell32;
-extern crate kernel32;
 
 use std::path::PathBuf;
 use std::env;
@@ -11,19 +8,12 @@ use std::ffi::{OsStr, OsString};
 use std::os::windows::ffi::{OsStrExt, OsStringExt};
 use std::io::{Error, ErrorKind};
 
-// use self::winapi::shared::guiddef::GUID;
-// use self::winapi::um::winnt::PWSTR;
-// use self::winapi::um::shlobj::SHGetKnownFolderPath;
-// use self::winapi::um::combaseapi::CoTaskMemFree;
-// use self::winapi::shared::minwindef::DWORD;
-// use self::winapi::um::winbase::GetBinaryTypeW;
-
-use self::winapi::guiddef::GUID;
-use self::winapi::winnt::PWSTR;
-use self::winapi::minwindef::DWORD;
-use self::ole32::CoTaskMemFree;
-use self::shell32::SHGetKnownFolderPath;
-use self::kernel32::GetBinaryTypeW;
+use self::winapi::shared::guiddef::GUID;
+use self::winapi::um::winnt::PWSTR;
+use self::winapi::um::combaseapi::CoTaskMemFree;
+use self::winapi::um::shlobj::SHGetKnownFolderPath;
+use self::winapi::shared::minwindef::DWORD;
+use self::winapi::um::winbase::GetBinaryTypeW;
 
 use ::LocationType;
 use ::LocationType::*;
