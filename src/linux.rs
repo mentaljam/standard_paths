@@ -54,9 +54,11 @@ fn xdg_data_dirs() -> Vec<PathBuf> {
             paths.dedup();
             let mut res = Vec::new();
             for path in paths {
-                let path_str = path.to_str().unwrap();
-                if !path_str.is_empty() && path_str.starts_with('/') {
-                    res.push(path.canonicalize().unwrap());
+                if path.is_dir() {
+                    let path_str = path.to_str().unwrap();
+                    if !path_str.is_empty() && path_str.starts_with('/') {
+                        res.push(path.canonicalize().unwrap());
+                    }
                 }
             }
             res
