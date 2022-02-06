@@ -121,7 +121,7 @@ const FOLDERID_ProgramData: GUID = GUID {
 
 struct SafePwstr(PWSTR);
 
-impl SafePwstr {    
+impl SafePwstr {
     pub fn new() -> Self {
         SafePwstr(ptr::null_mut())
     }
@@ -197,7 +197,7 @@ impl StandardPaths {
             },
 
             RuntimeLocation | HomeLocation => env::home_dir().ok_or(StandardPaths::home_dir_err()),
-            
+
             TempLocation => {
                 let canonicalized = env::temp_dir().canonicalize().unwrap();
                 Ok(PathBuf::from(canonicalized.to_str().unwrap().get(4..).unwrap()))
@@ -233,7 +233,7 @@ impl StandardPaths {
             }
         }
     }
-    
+
     #[inline]
     #[doc(hidden)]
     pub fn standard_locations_impl(&self, location: LocationType) -> Result<Vec<PathBuf>, Error> {

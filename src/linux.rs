@@ -73,7 +73,7 @@ fn xdg_data_dirs() -> Vec<PathBuf> {
 }
 
 impl StandardPaths {
-    
+
     #[inline]
     #[doc(hidden)]
     pub fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
@@ -90,8 +90,8 @@ impl StandardPaths {
                 Ok(path)
             },
 
-            LocationType::AppDataLocation | 
-            LocationType::AppLocalDataLocation | 
+            LocationType::AppDataLocation |
+            LocationType::AppLocalDataLocation |
             LocationType::GenericDataLocation => {
                 let mut path = get_var_or_home!("XDG_DATA_HOME", ".local", "share");
                 if location == LocationType::AppDataLocation ||
@@ -126,7 +126,7 @@ impl StandardPaths {
                     },
                     _ => {
                         let mut runtime_dir = String::from("runtime-");
-                        runtime_dir.push_str(user.name());
+                        runtime_dir.push_str(&user.name().to_string_lossy());
                         let mut path = env::temp_dir();
                         path.push(runtime_dir);
                         let md = fs::metadata(&path)?;
@@ -162,7 +162,7 @@ impl StandardPaths {
                 path.push(dir);
                 Ok(path)
             },
-            
+
             _ => {
                 // http://www.freedesktop.org/wiki/Software/xdg-user-dirs
                 let mut config = get_var_or_home!("XDG_CONFIG_HOME", ".config");

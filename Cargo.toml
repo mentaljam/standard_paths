@@ -11,10 +11,10 @@ license = "MIT"
 readme = "README.md"
 
 [target.'cfg(target_os = "linux")'.dependencies]
-users = "0.5.0"
+users = "0.11"
 
 [target.'cfg(windows)'.dependencies]
-winapi = { version = "0.3", features = ["shlobj", "combaseapi", "winbase"] }
+winapi = { version = "^0.3", features = ["shlobj", "combaseapi", "winbase"] }
 
 [dev_dependencies]
-argparse = "0.2.1"
+argparse = "0.2"
