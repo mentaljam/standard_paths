@@ -26,7 +26,7 @@ macro_rules! get_var_or_home {
                 },
                 _ => return Err(StandardPaths::home_dir_err())
             }
-        };
+        }
     }
 }
 
@@ -70,7 +70,7 @@ impl StandardPaths {
     #[doc(hidden)]
     pub fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
         match location {
-            LocationType::HomeLocation => env::home_dir().ok_or(StandardPaths::home_dir_err()),
+            LocationType::HomeLocation => env::home_dir().ok_or_else(StandardPaths::home_dir_err),
             LocationType::TempLocation => Ok(env::temp_dir()),
             LocationType::AppCacheLocation | LocationType::GenericCacheLocation => {
                 // http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html
@@ -130,7 +130,7 @@ impl StandardPaths {
                         if !md.is_dir() {
                             fs::create_dir_all(&path)?;
                         }
-                        (PathBuf::from(path), md)
+                        (path, md)
                     }
                 };
 
@@ -290,7 +290,7 @@ where
     }
 }
 
-const EXTENSIONS: [&'static str; 3] = ["bin", "run", "sh"];
+const EXTENSIONS: [&str; 3] = ["bin", "run", "sh"];
 
 #[inline]
 #[doc(hidden)]
@@ -323,7 +323,7 @@ where
 
     // At first search the provided name
     let mut res = Vec::new();
-    for mut path in paths.to_owned() {
+    for mut path in paths.iter().cloned() {
         path.push(&name);
         if is_executable(&path) {
             res.push(path);
@@ -332,7 +332,7 @@ where
 
     // Then check if an extension could be appended
     if path.extension().is_none() {
-        for mut path in paths.to_owned() {
+        for mut path in paths.iter().cloned() {
             path.push(&name);
             for ext in &EXTENSIONS {
                 let mut full_path = path.clone();

@@ -26,7 +26,7 @@ fn main() {
         ("App Config", AppConfigLocation),
     ];
 
-    let sl = StandardPaths::new_with_names("app", "org");
+    let sl = StandardPaths::new("app", "org");
 
     println!("\nListing standard locations:");
     for &(ref name, ref value) in &locations {

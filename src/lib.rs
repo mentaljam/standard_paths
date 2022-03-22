@@ -14,10 +14,12 @@
 //! use standard_paths::LocationType::*;
 //!
 //! fn main() {
-//!     let sp = StandardPaths::new_with_names("app", "org");
+//!     let sp = StandardPaths::new("app", "org");
 //!     println!("{:?}", sp.writable_location(AppLocalDataLocation));
 //! }
 //! ```
+
+#![allow(deprecated)] // Do not warn about deprecated std::env::home_dir
 
 #[cfg(target_os = "linux")]
 mod linux;
@@ -147,10 +149,10 @@ pub struct StandardPaths {
     org_name: String,
 }
 
-impl StandardPaths {
+impl Default for StandardPaths {
     /// Constructs a new `StandardPaths` with the application name
     /// derived from the `CARGO_PKG_NAME` variable.
-    pub fn new() -> StandardPaths {
+    fn default() -> StandardPaths {
         StandardPaths {
             app_name: match env::var("CARGO_PKG_NAME") {
                 Ok(name) => name,
@@ -159,9 +161,11 @@ impl StandardPaths {
             org_name: String::new(),
         }
     }
+}
 
+impl StandardPaths {
     /// Constructs a new `StandardPaths` with the provided `app` and `organization` names.
-    pub fn new_with_names<S>(app: S, organization: S) -> StandardPaths
+    pub fn new<S>(app: S, organization: S) -> StandardPaths
     where
         S: Into<String>,
     {
@@ -291,18 +295,18 @@ impl StandardPaths {
         let paths = self.standard_locations(location)?;
         for mut path in paths {
             path.push(&name);
-            match &option {
-                &LocateOption::LocateBoth => {
+            match option {
+                LocateOption::LocateBoth => {
                     if path.exists() {
                         return Ok(Some(path));
                     }
                 }
-                &LocateOption::LocateFile => {
+                LocateOption::LocateFile => {
                     if path.is_file() {
                         return Ok(Some(path));
                     }
                 }
-                &LocateOption::LocateDirectory => {
+                LocateOption::LocateDirectory => {
                     if path.is_dir() {
                         return Ok(Some(path));
                     }
@@ -338,18 +342,18 @@ impl StandardPaths {
         let mut res = Vec::new();
         for mut path in paths {
             path.push(&name);
-            match &option {
-                &LocateOption::LocateBoth => {
+            match option {
+                LocateOption::LocateBoth => {
                     if path.exists() {
                         res.push(path);
                     }
                 }
-                &LocateOption::LocateFile => {
+                LocateOption::LocateFile => {
                     if path.is_file() {
                         res.push(path);
                     }
                 }
-                &LocateOption::LocateDirectory => {
+                LocateOption::LocateDirectory => {
                     if path.is_dir() {
                         res.push(path);
                     }
