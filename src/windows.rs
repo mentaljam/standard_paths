@@ -132,16 +132,16 @@ impl AsMut<PWSTR> for SafePwstr {
     }
 }
 
-impl Into<PathBuf> for SafePwstr {
-    fn into(self) -> PathBuf {
+impl From<SafePwstr> for PathBuf {
+    fn from(str: SafePwstr) -> PathBuf {
         unsafe {
             // Calculate length of wide C string
             let mut len = 0;
-            while *self.0.offset(len) != 0 {
+            while *str.0.offset(len) != 0 {
                 len += 1;
             }
             // Convert to OsString
-            let wpath: &[u16] = slice::from_raw_parts(self.0, len as usize);
+            let wpath: &[u16] = slice::from_raw_parts(str.0, len as usize);
             let path: OsString = OsStringExt::from_wide(wpath);
             // Return PathBuf
             PathBuf::from(path)
@@ -195,7 +195,9 @@ impl StandardPaths {
                 Ok(path)
             }
 
-            RuntimeLocation | HomeLocation => env::home_dir().ok_or(StandardPaths::home_dir_err()),
+            RuntimeLocation | HomeLocation => {
+                env::home_dir().ok_or_else(StandardPaths::home_dir_err)
+            }
 
             TempLocation => {
                 let canonicalized = env::temp_dir().canonicalize().unwrap();
@@ -270,14 +272,11 @@ impl StandardPaths {
                 {}
             );
             let path = env::current_exe()?;
-            match path.parent() {
-                Some(parent) => {
-                    let mut parent: PathBuf = parent.into();
-                    dirs.push(parent.clone());
-                    parent.push("data");
-                    dirs.push(parent);
-                }
-                _ => (),
+            if let Some(parent) = path.parent() {
+                let mut parent: PathBuf = parent.into();
+                dirs.push(parent.clone());
+                parent.push("data");
+                dirs.push(parent);
             }
         }
         Ok(dirs)
@@ -366,7 +365,7 @@ where
 
     // At first search the provided name
     let mut res = Vec::new();
-    for mut path in paths.to_owned() {
+    for mut path in paths.iter().cloned() {
         path.push(&name);
         if is_executable(&path) {
             res.push(path);
@@ -375,7 +374,7 @@ where
 
     // Then check if an extension could be appended
     if path.extension().is_none() {
-        for mut path in paths.to_owned() {
+        for mut path in paths.iter().cloned() {
             path.push(&name);
             for ext in &exe_extensions {
                 let mut full_path = path.clone();

@@ -84,7 +84,7 @@ fn main() {
         }
     };
 
-    let sp = StandardPaths::new_with_names(app_name, org_name);
+    let sp = StandardPaths::new(app_name, org_name);
     if locate_all {
         match sp.locate_all(location, &file, option) {
             Ok(paths) => {

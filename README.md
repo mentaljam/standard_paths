@@ -39,7 +39,7 @@ use standard_paths::*;
 use standard_paths::LocationType::*;
 
 fn main() {
-    let sp = StandardPaths::new_with_names("app", "org");
+    let sp = StandardPaths::new("app", "org");
     println!("App data location: {:?}", sp.writable_location(AppLocalDataLocation));
 }
 ```
