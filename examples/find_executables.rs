@@ -1,8 +1,8 @@
 extern crate standard_paths;
 
+use standard_paths::*;
 use std::env;
 use std::process;
-use standard_paths::*;
 
 fn main() {
     let args = env::args().skip(1).collect::<Vec<_>>();
@@ -30,11 +30,16 @@ fn main() {
     for exe in args {
         let fexe = format!("{:>1$}", exe, ind);
         match StandardPaths::find_executable(exe.clone()) {
-            Some(paths) => println!("{}: \"{}\"", fexe, paths.iter()
-                                                        .map(|p| p.to_str().unwrap())
-                                                        .collect::<Vec<_>>()
-                                                        .join("\", \"")),
-            _ => println!("{}: not found", fexe)
+            Some(paths) => println!(
+                "{}: \"{}\"",
+                fexe,
+                paths
+                    .iter()
+                    .map(|p| p.to_str().unwrap())
+                    .collect::<Vec<_>>()
+                    .join("\", \"")
+            ),
+            _ => println!("{}: not found", fexe),
         }
     }
 }

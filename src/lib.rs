@@ -32,9 +32,8 @@ mod windows;
 use windows::*;
 
 use std::env;
-use std::path::{Path, PathBuf};
 use std::io::{Error, ErrorKind};
-
+use std::path::{Path, PathBuf};
 
 /// Enumerates the standard location type.
 ///
@@ -122,7 +121,7 @@ pub enum LocationType {
     /// The user-specific configuration files directory.
     ///
     /// This is an application-specific value.
-    AppConfigLocation
+    AppConfigLocation,
 }
 
 /// Enumerates the locate option type.
@@ -137,7 +136,7 @@ pub enum LocateOption {
     /// Locate only files.
     LocateFile,
     /// Locate only directories.
-    LocateDirectory
+    LocateDirectory,
 }
 
 /// Stores application and organization names and provides all the crate methods.
@@ -145,29 +144,30 @@ pub struct StandardPaths {
     /// Application name.
     app_name: String,
     /// organization name.
-    org_name: String
+    org_name: String,
 }
 
 impl StandardPaths {
-
     /// Constructs a new `StandardPaths` with the application name
     /// derived from the `CARGO_PKG_NAME` variable.
     pub fn new() -> StandardPaths {
         StandardPaths {
             app_name: match env::var("CARGO_PKG_NAME") {
                 Ok(name) => name,
-                _ => String::new()
+                _ => String::new(),
             },
-            org_name: String::new()
+            org_name: String::new(),
         }
     }
 
     /// Constructs a new `StandardPaths` with the provided `app` and `organization` names.
     pub fn new_with_names<S>(app: S, organization: S) -> StandardPaths
-    where S: Into<String> {
+    where
+        S: Into<String>,
+    {
         StandardPaths {
             app_name: app.into(),
-            org_name: organization.into()
+            org_name: organization.into(),
         }
     }
 
@@ -234,11 +234,13 @@ impl StandardPaths {
     /// * `name` - the name of the searched executable or an absolute path
     /// which should be checked to be executable.
     pub fn find_executable<S>(name: S) -> Option<Vec<PathBuf>>
-    where S: Into<String> {
+    where
+        S: Into<String>,
+    {
         // Read system paths
         let path_var = match env::var("PATH") {
             Ok(var) => var,
-            _ => return None
+            _ => return None,
         };
         let paths: Vec<PathBuf> = env::split_paths(&path_var).collect();
         StandardPaths::find_executable_in_paths(name, paths)
@@ -257,7 +259,10 @@ impl StandardPaths {
     /// which should be checked to be executable.
     /// * `paths` - the directories where to search for the executable.
     pub fn find_executable_in_paths<S, P>(name: S, paths: P) -> Option<Vec<PathBuf>>
-    where S: Into<String>, P: AsRef<Vec<PathBuf>> {
+    where
+        S: Into<String>,
+        P: AsRef<Vec<PathBuf>>,
+    {
         find_executable_in_paths_impl(name, &paths)
     }
 
@@ -274,15 +279,34 @@ impl StandardPaths {
     /// * `location` - the location type where to search.
     /// * `name` - the name of the file or directory to search.
     /// * `option` - the type of entry to search.
-    pub fn locate<P>(&self, location: LocationType, name: P, option: LocateOption) -> Result<Option<PathBuf>, Error>
-    where P: AsRef<Path> {
+    pub fn locate<P>(
+        &self,
+        location: LocationType,
+        name: P,
+        option: LocateOption,
+    ) -> Result<Option<PathBuf>, Error>
+    where
+        P: AsRef<Path>,
+    {
         let paths = self.standard_locations(location)?;
         for mut path in paths {
             path.push(&name);
             match &option {
-                &LocateOption::LocateBoth => if path.exists() { return Ok(Some(path)) },
-                &LocateOption::LocateFile => if path.is_file() { return Ok(Some(path)) },
-                &LocateOption::LocateDirectory => if path.is_dir() { return Ok(Some(path)) }
+                &LocateOption::LocateBoth => {
+                    if path.exists() {
+                        return Ok(Some(path));
+                    }
+                }
+                &LocateOption::LocateFile => {
+                    if path.is_file() {
+                        return Ok(Some(path));
+                    }
+                }
+                &LocateOption::LocateDirectory => {
+                    if path.is_dir() {
+                        return Ok(Some(path));
+                    }
+                }
             }
         }
         Ok(None)
@@ -301,19 +325,42 @@ impl StandardPaths {
     /// * `location` - the location type where to search.
     /// * `name` - the name of the files or directories to search.
     /// * `option` - the type of entries to search.
-    pub fn locate_all<P>(&self, location: LocationType, name: P, option: LocateOption) -> Result<Option<Vec<PathBuf>>, Error>
-    where P: AsRef<Path> {
+    pub fn locate_all<P>(
+        &self,
+        location: LocationType,
+        name: P,
+        option: LocateOption,
+    ) -> Result<Option<Vec<PathBuf>>, Error>
+    where
+        P: AsRef<Path>,
+    {
         let paths = self.standard_locations(location)?;
         let mut res = Vec::new();
         for mut path in paths {
             path.push(&name);
             match &option {
-                &LocateOption::LocateBoth => if path.exists() { res.push(path); },
-                &LocateOption::LocateFile => if path.is_file() { res.push(path); },
-                &LocateOption::LocateDirectory => if path.is_dir() { res.push(path); }
+                &LocateOption::LocateBoth => {
+                    if path.exists() {
+                        res.push(path);
+                    }
+                }
+                &LocateOption::LocateFile => {
+                    if path.is_file() {
+                        res.push(path);
+                    }
+                }
+                &LocateOption::LocateDirectory => {
+                    if path.is_dir() {
+                        res.push(path);
+                    }
+                }
             }
         }
-        if res.is_empty() { Ok(None) } else { Ok(Some(res)) }
+        if res.is_empty() {
+            Ok(None)
+        } else {
+            Ok(Some(res))
+        }
     }
 
     #[inline]
