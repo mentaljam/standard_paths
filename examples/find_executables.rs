@@ -6,7 +6,7 @@ use std::process;
 
 fn main() {
     let args = env::args().skip(1).collect::<Vec<_>>();
-    if args.len() == 0 {
+    if args.is_empty() {
         println!("\n    Usage: find_executable <path1> [path2 [path3 ...]]\n");
         process::exit(0);
     }
