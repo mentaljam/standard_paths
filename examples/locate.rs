@@ -1,11 +1,7 @@
-extern crate argparse;
-extern crate standard_paths;
-
 use argparse::{ArgumentParser, Store, StoreTrue};
-use standard_paths::LocateOption::*;
-use standard_paths::LocationType::*;
-use standard_paths::*;
 use std::process;
+
+use standard_paths::*;
 
 fn main() {
     let mut app_name = String::new();
@@ -43,25 +39,25 @@ fn main() {
     }
 
     let location = match location.as_str() {
-        "HomeLocation" => HomeLocation,
-        "DesktopLocation" => DesktopLocation,
-        "DocumentsLocation" => DocumentsLocation,
-        "DownloadLocation" => DownloadLocation,
-        "MoviesLocation" => MoviesLocation,
-        "MusicLocation" => MusicLocation,
-        "PicturesLocation" => PicturesLocation,
-        "ApplicationsLocation" => ApplicationsLocation,
-        "FontsLocation" => FontsLocation,
-        "RuntimeLocation" => RuntimeLocation,
-        "TempLocation" => TempLocation,
-        "GenericDataLocation" => GenericDataLocation,
-        "AppDataLocation" => AppDataLocation,
-        "AppLocalDataLocation" => AppLocalDataLocation,
-        "GenericCacheLocation" => GenericCacheLocation,
-        "AppCacheLocation" => AppCacheLocation,
-        "ConfigLocation" => ConfigLocation,
-        "GenericConfigLocation" => GenericConfigLocation,
-        "AppConfigLocation" => AppConfigLocation,
+        "HomeLocation" => LocationType::HomeLocation,
+        "DesktopLocation" => LocationType::DesktopLocation,
+        "DocumentsLocation" => LocationType::DocumentsLocation,
+        "DownloadLocation" => LocationType::DownloadLocation,
+        "MoviesLocation" => LocationType::MoviesLocation,
+        "MusicLocation" => LocationType::MusicLocation,
+        "PicturesLocation" => LocationType::PicturesLocation,
+        "ApplicationsLocation" => LocationType::ApplicationsLocation,
+        "FontsLocation" => LocationType::FontsLocation,
+        "RuntimeLocation" => LocationType::RuntimeLocation,
+        "TempLocation" => LocationType::TempLocation,
+        "GenericDataLocation" => LocationType::GenericDataLocation,
+        "AppDataLocation" => LocationType::AppDataLocation,
+        "AppLocalDataLocation" => LocationType::AppLocalDataLocation,
+        "GenericCacheLocation" => LocationType::GenericCacheLocation,
+        "AppCacheLocation" => LocationType::AppCacheLocation,
+        "ConfigLocation" => LocationType::ConfigLocation,
+        "GenericConfigLocation" => LocationType::GenericConfigLocation,
+        "AppConfigLocation" => LocationType::AppConfigLocation,
         _ => {
             eprintln!(
                 "Bad location type '{}', see the documentation for valid values",
@@ -72,9 +68,9 @@ fn main() {
     };
 
     let option = match option.as_str() {
-        "LocateBoth" => LocateBoth,
-        "LocateFile" => LocateFile,
-        "LocateDirectory" => LocateDirectory,
+        "LocateBoth" => LocateOption::LocateBoth,
+        "LocateFile" => LocateOption::LocateFile,
+        "LocateDirectory" => LocateOption::LocateDirectory,
         _ => {
             eprintln!(
                 "Bad locate option '{}', see the documentation for valid values",

@@ -1,17 +1,13 @@
-extern crate users;
+use std::{
+    collections::HashMap,
+    env, fs,
+    io::{BufRead, BufReader, Error, ErrorKind},
+    os::{linux::fs::MetadataExt, unix::fs::PermissionsExt},
+    path::PathBuf,
+};
+use users::{get_current_uid, get_user_by_uid};
 
-use self::users::{get_current_uid, get_user_by_uid};
-use std::collections::HashMap;
-use std::env;
-use std::fs;
-use std::io::prelude::*;
-use std::io::{BufReader, Error, ErrorKind};
-use std::os::linux::fs::MetadataExt;
-use std::os::unix::fs::PermissionsExt;
-use std::path::PathBuf;
-
-use LocationType;
-use StandardPaths;
+use crate::{LocationType, StandardPaths};
 
 macro_rules! get_var_or_home {
     ($var_name:expr, $($sub_dirs:expr),*) => {

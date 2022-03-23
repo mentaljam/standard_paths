@@ -1,23 +1,20 @@
-extern crate winapi;
+use std::{
+    env,
+    ffi::{OsStr, OsString},
+    io::{Error, ErrorKind},
+    os::windows::ffi::{OsStrExt, OsStringExt},
+    path::PathBuf,
+    ptr, slice,
+};
+use winapi::{
+    shared::{guiddef::GUID, minwindef::DWORD},
+    um::{
+        combaseapi::CoTaskMemFree, shlobj::SHGetKnownFolderPath, winbase::GetBinaryTypeW,
+        winnt::PWSTR,
+    },
+};
 
-use std::env;
-use std::ffi::{OsStr, OsString};
-use std::io::{Error, ErrorKind};
-use std::os::windows::ffi::{OsStrExt, OsStringExt};
-use std::path::PathBuf;
-use std::ptr;
-use std::slice;
-
-use self::winapi::shared::guiddef::GUID;
-use self::winapi::shared::minwindef::DWORD;
-use self::winapi::um::combaseapi::CoTaskMemFree;
-use self::winapi::um::shlobj::SHGetKnownFolderPath;
-use self::winapi::um::winbase::GetBinaryTypeW;
-use self::winapi::um::winnt::PWSTR;
-
-use LocationType;
-use LocationType::*;
-use StandardPaths;
+use crate::{LocationType, StandardPaths};
 
 /// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Desktop
 #[allow(non_upper_case_globals)]
@@ -176,30 +173,30 @@ impl StandardPaths {
     #[doc(hidden)]
     pub fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
         match location {
-            DownloadLocation => {
+            LocationType::DownloadLocation => {
                 sh_get_known_folder_path!(FOLDERID_Downloads, path, { Ok(path) }, {
-                    self.writable_location(DocumentsLocation)
+                    self.writable_location(LocationType::DocumentsLocation)
                 })
             }
 
-            AppCacheLocation | GenericCacheLocation => {
+            LocationType::AppCacheLocation | LocationType::GenericCacheLocation => {
                 // FOLDERID_InternetCache points to IE's cache. Most applications seem to
                 // be using a cache directory located in their AppData directory.
-                let loc2 = if location == AppCacheLocation {
-                    AppLocalDataLocation
+                let loc2 = if location == LocationType::AppCacheLocation {
+                    LocationType::AppLocalDataLocation
                 } else {
-                    GenericDataLocation
+                    LocationType::GenericDataLocation
                 };
                 let mut path = self.writable_location(loc2)?;
                 path.push("cache");
                 Ok(path)
             }
 
-            RuntimeLocation | HomeLocation => {
+            LocationType::RuntimeLocation | LocationType::HomeLocation => {
                 env::home_dir().ok_or_else(StandardPaths::home_dir_err)
             }
 
-            TempLocation => {
+            LocationType::TempLocation => {
                 let canonicalized = env::temp_dir().canonicalize().unwrap();
                 Ok(PathBuf::from(
                     canonicalized.to_str().unwrap().get(4..).unwrap(),
@@ -208,19 +205,19 @@ impl StandardPaths {
 
             _ => {
                 let id = match location {
-                    DesktopLocation => FOLDERID_Desktop,
-                    DocumentsLocation => FOLDERID_Documents,
-                    FontsLocation => FOLDERID_Fonts,
-                    ApplicationsLocation => FOLDERID_Programs,
-                    MusicLocation => FOLDERID_Music,
-                    MoviesLocation => FOLDERID_Videos,
-                    PicturesLocation => FOLDERID_Pictures,
-                    AppLocalDataLocation
-                    | GenericDataLocation
-                    | ConfigLocation
-                    | GenericConfigLocation
-                    | AppConfigLocation => FOLDERID_LocalAppData,
-                    AppDataLocation => FOLDERID_RoamingAppData,
+                    LocationType::DesktopLocation => FOLDERID_Desktop,
+                    LocationType::DocumentsLocation => FOLDERID_Documents,
+                    LocationType::FontsLocation => FOLDERID_Fonts,
+                    LocationType::ApplicationsLocation => FOLDERID_Programs,
+                    LocationType::MusicLocation => FOLDERID_Music,
+                    LocationType::MoviesLocation => FOLDERID_Videos,
+                    LocationType::PicturesLocation => FOLDERID_Pictures,
+                    LocationType::AppLocalDataLocation
+                    | LocationType::GenericDataLocation
+                    | LocationType::ConfigLocation
+                    | LocationType::GenericConfigLocation
+                    | LocationType::AppConfigLocation => FOLDERID_LocalAppData,
+                    LocationType::AppDataLocation => FOLDERID_RoamingAppData,
                     _ => GUID {
                         Data1: 0x0,
                         Data2: 0x0,
@@ -232,10 +229,10 @@ impl StandardPaths {
                     id,
                     mut path,
                     {
-                        if location == ConfigLocation
-                            || location == AppConfigLocation
-                            || location == AppDataLocation
-                            || location == AppLocalDataLocation
+                        if location == LocationType::ConfigLocation
+                            || location == LocationType::AppConfigLocation
+                            || location == LocationType::AppDataLocation
+                            || location == LocationType::AppLocalDataLocation
                         {
                             self.append_organization_and_app(&mut path);
                         }
@@ -253,18 +250,20 @@ impl StandardPaths {
         let mut dirs = Vec::new();
         let path = self.writable_location(location)?;
         dirs.push(path);
-        if location == ConfigLocation
-            || location == AppConfigLocation
-            || location == AppDataLocation
-            || location == AppLocalDataLocation
-            || location == GenericConfigLocation
-            || location == GenericDataLocation
+        if location == LocationType::ConfigLocation
+            || location == LocationType::AppConfigLocation
+            || location == LocationType::AppDataLocation
+            || location == LocationType::AppLocalDataLocation
+            || location == LocationType::GenericConfigLocation
+            || location == LocationType::GenericDataLocation
         {
             sh_get_known_folder_path!(
                 FOLDERID_ProgramData,
                 mut path,
                 {
-                    if location != GenericConfigLocation && location != GenericDataLocation {
+                    if location != LocationType::GenericConfigLocation
+                        && location != LocationType::GenericDataLocation
+                    {
                         self.append_organization_and_app(&mut path);
                     }
                     dirs.push(path);
