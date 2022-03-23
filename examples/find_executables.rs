@@ -1,8 +1,6 @@
-extern crate standard_paths;
+use std::{env, process};
 
 use standard_paths::*;
-use std::env;
-use std::process;
 
 fn main() {
     let args = env::args().skip(1).collect::<Vec<_>>();

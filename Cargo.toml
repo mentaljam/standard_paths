@@ -2,6 +2,7 @@
 name = "standard_paths"
 description = "A port of QStandardPaths class which provides methods for accessing standard paths on the local filesystem (config, cache, user directories and etc.)."
 version = "1.0.0"
+edition = "2021"
 authors = ["Petr Tsymbarovich <petr@tsymbarovich.ru>"]
 repository = "https://github.com/mentaljam/standard_paths"
 documentation = "https://docs.rs/standard_paths"

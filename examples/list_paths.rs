@@ -1,29 +1,26 @@
-extern crate standard_paths;
-
-use standard_paths::LocationType::*;
 use standard_paths::*;
 
 fn main() {
     let locations = vec![
-        ("Home", HomeLocation),
-        ("Desktop", DesktopLocation),
-        ("Documents", DocumentsLocation),
-        ("Download", DownloadLocation),
-        ("Movies", MoviesLocation),
-        ("Music", MusicLocation),
-        ("Pictures", PicturesLocation),
-        ("Applications", ApplicationsLocation),
-        ("Fonts", FontsLocation),
-        ("Runtime", RuntimeLocation),
-        ("Temp", TempLocation),
-        ("Generic Data", GenericDataLocation),
-        ("App Data", AppDataLocation),
-        ("App Local Data", AppLocalDataLocation),
-        ("Generic Cache", GenericCacheLocation),
-        ("App Cache", AppCacheLocation),
-        ("Config", ConfigLocation),
-        ("Generic Config", GenericConfigLocation),
-        ("App Config", AppConfigLocation),
+        ("Home", LocationType::HomeLocation),
+        ("Desktop", LocationType::DesktopLocation),
+        ("Documents", LocationType::DocumentsLocation),
+        ("Download", LocationType::DownloadLocation),
+        ("Movies", LocationType::MoviesLocation),
+        ("Music", LocationType::MusicLocation),
+        ("Pictures", LocationType::PicturesLocation),
+        ("Applications", LocationType::ApplicationsLocation),
+        ("Fonts", LocationType::FontsLocation),
+        ("Runtime", LocationType::RuntimeLocation),
+        ("Temp", LocationType::TempLocation),
+        ("Generic Data", LocationType::GenericDataLocation),
+        ("App Data", LocationType::AppDataLocation),
+        ("App Local Data", LocationType::AppLocalDataLocation),
+        ("Generic Cache", LocationType::GenericCacheLocation),
+        ("App Cache", LocationType::AppCacheLocation),
+        ("Config", LocationType::ConfigLocation),
+        ("Generic Config", LocationType::GenericConfigLocation),
+        ("App Config", LocationType::AppConfigLocation),
     ];
 
     let sl = StandardPaths::new("app", "org");
