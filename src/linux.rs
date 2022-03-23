@@ -13,7 +13,7 @@ macro_rules! get_var_or_home {
     ($var_name:expr, $($sub_dirs:expr),*) => {
         match env::var($var_name) {
             Ok(path) => PathBuf::from(path),
-            _ => match env::home_dir() {
+            _ => match home::home_dir() {
                 Some(mut path) => {
                     $(
                         path.push($sub_dirs);
@@ -66,7 +66,7 @@ impl StandardPaths {
     #[doc(hidden)]
     pub fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
         match location {
-            LocationType::HomeLocation => env::home_dir().ok_or_else(StandardPaths::home_dir_err),
+            LocationType::HomeLocation => home::home_dir().ok_or_else(StandardPaths::home_dir_err),
             LocationType::TempLocation => Ok(env::temp_dir()),
             LocationType::AppCacheLocation | LocationType::GenericCacheLocation => {
                 // http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html
@@ -195,7 +195,7 @@ impl StandardPaths {
                 if lines.contains_key(key) {
                     let value = &lines[key];
                     if value.starts_with("$HOME") {
-                        let mut path = match env::home_dir() {
+                        let mut path = match home::home_dir() {
                             Some(path) => path,
                             _ => return Err(StandardPaths::home_dir_err()),
                         };
@@ -215,7 +215,7 @@ impl StandardPaths {
                     LocationType::DownloadLocation => "Downloads",
                     _ => return Err(Error::new(ErrorKind::Other, "Unexpected error")),
                 };
-                let mut path = match env::home_dir() {
+                let mut path = match home::home_dir() {
                     Some(path) => path,
                     _ => return Err(StandardPaths::home_dir_err()),
                 };
@@ -256,7 +256,7 @@ impl StandardPaths {
                 dirs
             }
 
-            LocationType::FontsLocation => match env::home_dir() {
+            LocationType::FontsLocation => match home::home_dir() {
                 Some(mut path) => {
                     path.push(".fonts");
                     vec![path]

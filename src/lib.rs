@@ -19,8 +19,6 @@
 //! }
 //! ```
 
-#![allow(deprecated)] // Do not warn about deprecated std::env::home_dir
-
 #[cfg(target_os = "linux")]
 mod linux;
 

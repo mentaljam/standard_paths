@@ -193,7 +193,7 @@ impl StandardPaths {
             }
 
             LocationType::RuntimeLocation | LocationType::HomeLocation => {
-                env::home_dir().ok_or_else(StandardPaths::home_dir_err)
+                home::home_dir().ok_or_else(StandardPaths::home_dir_err)
             }
 
             LocationType::TempLocation => {
