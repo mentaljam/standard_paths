@@ -8,22 +8,25 @@ fn main() {
         ("FOLDERID_Videos", "18989B1D-99B5-455B-841C-AB7C74E4DDFC"),  // MoviesLocation
         ("FOLDERID_Pictures", "33E28130-4E1E-4676-835A-98395C3BC3BB"), // PicturesLocation
         ("FOLDERID_Downloads", "374DE290-123F-4565-9164-39C4925E467B"), // DownloadLocation
-        (
-            "FOLDERID_LocalAppData",
-            "F1B32785-6FBA-4FCF-9D55-7B8E7F157091",
-        ), // AppLocalDataLocation, AppLocalDataLocation,
+        // AppLocalDataLocation, AppLocalDataLocation,
         // GenericDataLocation, ConfigLocation,
         // GenericConfigLocation, AppConfigLocation
         (
+            "FOLDERID_LocalAppData",
+            "F1B32785-6FBA-4FCF-9D55-7B8E7F157091",
+        ),
+        // AppDataLocation
+        (
             "FOLDERID_RoamingAppData",
             "3EB685DB-65F9-4CF6-A03A-E3EF65729F3D",
-        ), // AppDataLocation
+        ),
+        // ConfigLocation, AppConfigLocation,
+        // AppDataLocation, AppLocalDataLocation,
+        // GenericConfigLocation, GenericDataLocation
         (
             "FOLDERID_ProgramData",
             "62AB5D82-FDC1-4DC3-A9DD-070D1D495D97",
-        ), // ConfigLocation, AppConfigLocation,
-           // AppDataLocation, AppLocalDataLocation,
-           // GenericConfigLocation, GenericDataLocation
+        ),
     ];
 
     for &(name, guid) in &ids {
