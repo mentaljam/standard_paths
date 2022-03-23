@@ -51,7 +51,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --no-deps --all-features -- -D warnings
+          args: --no-deps --examples -- -D warnings
 
   format:
     name: Format
