@@ -27,7 +27,7 @@ macOS is currently unsupported. If you want to help with macOS feel free to cont
 
 ```toml
 [dependencies]
-standard_paths = "^0.4"
+standard_paths = "^1.0"
 ```
 
 #### main.rs
