@@ -45,7 +45,7 @@ use std::path::{Path, PathBuf};
 ///
 /// Some of the values are used to acquire user-specific paths,
 /// some are application-specific and some are system-wide.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum LocationType {
     /// The user's home directory.
     ///
@@ -131,7 +131,7 @@ pub enum LocationType {
 /// Is used to call
 /// [StandardPaths::locate location](struct.StandardPaths.html#method.locate) and
 /// [StandardPaths::locate_all](struct.StandardPaths.html#method.locate_all).
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum LocateOption {
     /// Locate both files and directories (traversing symbolic links).
     LocateBoth,

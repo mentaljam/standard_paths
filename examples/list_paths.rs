@@ -29,8 +29,8 @@ fn main() {
     let sl = StandardPaths::new("app", "org");
 
     println!("\nListing standard locations:");
-    for &(ref name, ref value) in &locations {
-        match sl.standard_locations(value.clone()) {
+    for (name, value) in &locations {
+        match sl.standard_locations(*value) {
             Ok(paths) => println!(
                 "{:>14}: \"{}\"",
                 name,
@@ -45,8 +45,8 @@ fn main() {
     }
 
     println!("\nListing writable locations:");
-    for &(ref name, ref value) in &locations {
-        match sl.writable_location(value.clone()) {
+    for (name, value) in &locations {
+        match sl.writable_location(*value) {
             Ok(path) => println!("{:>14}: \"{}\"", name, path.to_str().unwrap()),
             Err(err) => println!("{:>14}: {}", name, err),
         }

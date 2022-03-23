@@ -251,7 +251,7 @@ impl StandardPaths {
     #[doc(hidden)]
     pub fn standard_locations_impl(&self, location: LocationType) -> Result<Vec<PathBuf>, Error> {
         let mut dirs = Vec::new();
-        let path = self.writable_location(location.clone())?;
+        let path = self.writable_location(location)?;
         dirs.push(path);
         if location == ConfigLocation
             || location == AppConfigLocation
