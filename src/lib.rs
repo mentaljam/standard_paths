@@ -99,7 +99,7 @@ pub enum LocationType {
     ///
     /// This is a Windows-specific value.
     /// On all other platforms, it returns the same value as
-    /// [`AppDataLocation`].
+    /// [`LocationType::AppDataLocation`].
     AppLocalDataLocation,
     /// The directory for the user-specific cached data shared across applications.
     ///
