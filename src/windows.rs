@@ -118,7 +118,7 @@ const FOLDERID_ProgramData: GUID = GUID {
 struct SafePwstr(PWSTR);
 
 impl SafePwstr {
-    pub fn new() -> Self {
+    fn new() -> Self {
         SafePwstr(ptr::null_mut())
     }
 }
@@ -170,8 +170,7 @@ macro_rules! sh_get_known_folder_path {
 
 impl StandardPaths {
     #[inline]
-    #[doc(hidden)]
-    pub fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
+    pub(super) fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
         match location {
             LocationType::DownloadLocation => {
                 sh_get_known_folder_path!(FOLDERID_Downloads, path, { Ok(path) }, {
@@ -245,8 +244,10 @@ impl StandardPaths {
     }
 
     #[inline]
-    #[doc(hidden)]
-    pub fn standard_locations_impl(&self, location: LocationType) -> Result<Vec<PathBuf>, Error> {
+    pub(super) fn standard_locations_impl(
+        &self,
+        location: LocationType,
+    ) -> Result<Vec<PathBuf>, Error> {
         let mut dirs = Vec::new();
         let path = self.writable_location(location)?;
         dirs.push(path);
@@ -300,8 +301,7 @@ where
 }
 
 #[inline]
-#[doc(hidden)]
-pub fn find_executable_in_paths_impl<S, P>(name: S, paths: P) -> Option<Vec<PathBuf>>
+pub(super) fn find_executable_in_paths_impl<S, P>(name: S, paths: P) -> Option<Vec<PathBuf>>
 where
     S: Into<String>,
     P: AsRef<Vec<PathBuf>>,
