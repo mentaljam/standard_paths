@@ -16,7 +16,7 @@ use winapi::{
 
 use crate::{LocationType, StandardPaths};
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Desktop
+/// [`FOLDERID_Desktop`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Desktop)
 #[allow(non_upper_case_globals)]
 const FOLDERID_Desktop: GUID = GUID {
     Data1: 0xB4BFCC3A,
@@ -25,7 +25,7 @@ const FOLDERID_Desktop: GUID = GUID {
     Data4: [0xB0, 0x29, 0x7F, 0xE9, 0x9A, 0x87, 0xC6, 0x41],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Documents
+/// [`FOLDERID_Documents`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Documents)
 #[allow(non_upper_case_globals)]
 const FOLDERID_Documents: GUID = GUID {
     Data1: 0xFDD39AD0,
@@ -34,7 +34,7 @@ const FOLDERID_Documents: GUID = GUID {
     Data4: [0xAD, 0xB4, 0x6C, 0x85, 0x48, 0x03, 0x69, 0xC7],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Fonts
+/// [`FOLDERID_Fonts`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Fonts)
 #[allow(non_upper_case_globals)]
 const FOLDERID_Fonts: GUID = GUID {
     Data1: 0xFD228CB7,
@@ -43,7 +43,7 @@ const FOLDERID_Fonts: GUID = GUID {
     Data4: [0x86, 0x4C, 0x16, 0xF3, 0x91, 0x0A, 0xB8, 0xFE],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Programs
+/// [`FOLDERID_Programs`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Programs)
 #[allow(non_upper_case_globals)]
 const FOLDERID_Programs: GUID = GUID {
     Data1: 0xA77F5D77,
@@ -52,7 +52,7 @@ const FOLDERID_Programs: GUID = GUID {
     Data4: [0xA6, 0xA2, 0xAB, 0xA6, 0x01, 0x05, 0x4A, 0x51],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Music
+/// [`FOLDERID_Music`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Music)
 #[allow(non_upper_case_globals)]
 const FOLDERID_Music: GUID = GUID {
     Data1: 0x4BD8D571,
@@ -61,7 +61,7 @@ const FOLDERID_Music: GUID = GUID {
     Data4: [0xBE, 0x97, 0x42, 0x22, 0x20, 0x08, 0x0E, 0x43],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Videos
+/// [`FOLDERID_Videos`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Videos)
 #[allow(non_upper_case_globals)]
 const FOLDERID_Videos: GUID = GUID {
     Data1: 0x18989B1D,
@@ -70,7 +70,7 @@ const FOLDERID_Videos: GUID = GUID {
     Data4: [0x84, 0x1C, 0xAB, 0x7C, 0x74, 0xE4, 0xDD, 0xFC],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Pictures
+/// [`FOLDERID_Pictures`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Pictures)
 #[allow(non_upper_case_globals)]
 const FOLDERID_Pictures: GUID = GUID {
     Data1: 0x33E28130,
@@ -79,7 +79,7 @@ const FOLDERID_Pictures: GUID = GUID {
     Data4: [0x83, 0x5A, 0x98, 0x39, 0x5C, 0x3B, 0xC3, 0xBB],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Downloads
+/// [`FOLDERID_Downloads`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_Downloads)
 #[allow(non_upper_case_globals)]
 const FOLDERID_Downloads: GUID = GUID {
     Data1: 0x374DE290,
@@ -88,7 +88,7 @@ const FOLDERID_Downloads: GUID = GUID {
     Data4: [0x91, 0x64, 0x39, 0xC4, 0x92, 0x5E, 0x46, 0x7B],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_LocalAppData
+/// [`FOLDERID_LocalAppData`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_LocalAppData)
 #[allow(non_upper_case_globals)]
 const FOLDERID_LocalAppData: GUID = GUID {
     Data1: 0xF1B32785,
@@ -97,7 +97,7 @@ const FOLDERID_LocalAppData: GUID = GUID {
     Data4: [0x9D, 0x55, 0x7B, 0x8E, 0x7F, 0x15, 0x70, 0x91],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_RoamingAppData
+/// [`FOLDERID_RoamingAppData`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_RoamingAppData)
 #[allow(non_upper_case_globals)]
 const FOLDERID_RoamingAppData: GUID = GUID {
     Data1: 0x3EB685DB,
@@ -106,7 +106,7 @@ const FOLDERID_RoamingAppData: GUID = GUID {
     Data4: [0xA0, 0x3A, 0xE3, 0xEF, 0x65, 0x72, 0x9F, 0x3D],
 };
 
-/// https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_ProgramData
+/// [`FOLDERID_ProgramData`](https://msdn.microsoft.com/en-us/library/dd378457.aspx#FOLDERID_ProgramData)
 #[allow(non_upper_case_globals)]
 const FOLDERID_ProgramData: GUID = GUID {
     Data1: 0x62AB5D82,
@@ -284,7 +284,7 @@ impl StandardPaths {
 }
 
 /// Detect if `path` is an executable (based on
-/// [GetBinaryType](https://msdn.microsoft.com/ru-ru/library/windows/desktop/aa364819.aspx)).
+/// [`GetBinaryType`](https://msdn.microsoft.com/ru-ru/library/windows/desktop/aa364819.aspx)).
 fn is_executable<P>(path: P) -> bool
 where
     P: AsRef<OsStr>,

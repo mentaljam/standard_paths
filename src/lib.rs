@@ -3,7 +3,7 @@
 //! A Rust library providing methods for accessing standard paths
 //! on the local filesystem (config, cache, user directories and etc.).
 //!
-//! It's a port of [QStandardPaths](https://doc.qt.io/qt-5/qstandardpaths.html)
+//! It's a port of [`QStandardPaths`](https://doc.qt.io/qt-5/qstandardpaths.html)
 //! class of the Qt framework.
 //!
 //! ### Usage
@@ -20,6 +20,7 @@
 //! ```
 
 #![warn(missing_docs)]
+#![warn(clippy::doc_markdown)]
 
 #[cfg(target_os = "linux")]
 mod linux;
@@ -40,8 +41,8 @@ use std::path::{Path, PathBuf};
 /// Enumerates the standard location type.
 ///
 /// Is used to call
-/// [StandardPaths::writable location](struct.StandardPaths.html#method.writable_location) and
-/// [StandardPaths::find_executable_in_paths](struct.StandardPaths.html#method.find_executable_in_paths).
+/// [`StandardPaths::writable_location`] and
+/// [`StandardPaths::find_executable_in_paths`].
 ///
 /// Some of the values are used to acquire user-specific paths,
 /// some are application-specific and some are system-wide.
@@ -79,8 +80,7 @@ pub enum LocationType {
     /// The directory for the runtime communication files (like Unix local sockets).
     ///
     /// This is a generic value. It could returns
-    /// [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
-    /// on some systems.
+    /// [`None`] on some systems.
     RuntimeLocation,
     /// A directory for storing temporary files.
     ///
@@ -99,13 +99,12 @@ pub enum LocationType {
     ///
     /// This is a Windows-specific value.
     /// On all other platforms, it returns the same value as
-    /// [AppDataLocation](enum.LocationType.html#variant.AppDataLocation).
+    /// [`AppDataLocation`].
     AppLocalDataLocation,
     /// The directory for the user-specific cached data shared across applications.
     ///
     /// This is a generic value. It could returns
-    /// [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
-    /// from the appropriate methods if the system has no concept of shared cache.
+    /// [`None`] from the appropriate methods if the system has no concept of shared cache.
     GenericCacheLocation,
     /// The user-specific cached data directory.
     ///
@@ -129,8 +128,8 @@ pub enum LocationType {
 /// Enumerates the locate option type.
 ///
 /// Is used to call
-/// [StandardPaths::locate location](struct.StandardPaths.html#method.locate) and
-/// [StandardPaths::locate_all](struct.StandardPaths.html#method.locate_all).
+/// [`StandardPaths::locate`] and
+/// [`StandardPaths::locate_all`].
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum LocateOption {
     /// Locate both files and directories (traversing symbolic links).
@@ -150,7 +149,7 @@ pub struct StandardPaths {
 }
 
 impl Default for StandardPaths {
-    /// Constructs a new `StandardPaths` with the application name
+    /// Constructs a new [`StandardPaths`] with the application name
     /// derived from the `CARGO_PKG_NAME` variable.
     fn default() -> StandardPaths {
         StandardPaths {
@@ -164,7 +163,7 @@ impl Default for StandardPaths {
 }
 
 impl StandardPaths {
-    /// Constructs a new `StandardPaths` with the provided `app` and `organization` names.
+    /// Constructs a new [`StandardPaths`] with the provided `app` and `organization` names.
     pub fn new<S>(app: S, organization: S) -> StandardPaths
     where
         S: Into<String>,
@@ -180,7 +179,7 @@ impl StandardPaths {
     /// For example `~/.config` -> `~/.config/org/app`.
     ///
     /// # Arguments
-    /// * `path` - a mutable `PathBuf` to which the app suffix should be appended.
+    /// * `path` - a mutable [`PathBuf`] to which the app suffix should be appended.
     fn append_organization_and_app(&self, path: &mut PathBuf) {
         if !self.org_name.is_empty() {
             path.push(&self.org_name);
@@ -194,8 +193,7 @@ impl StandardPaths {
     ///
     /// Note: the returned path can be a directory that does not exist.
     ///
-    /// Returns [Error](https://doc.rust-lang.org/std/io/struct.Error.html)
-    /// if the location cannot be determined.
+    /// Returns [`Error`] if the location cannot be determined.
     ///
     /// # Arguments
     /// * `location` - location type.
@@ -209,9 +207,8 @@ impl StandardPaths {
     /// [self.writable location](struct.StandardPaths.html#method.writable_location)
     /// if it can be determined.
     ///
-    /// Returns [Error](https://doc.rust-lang.org/std/io/struct.Error.html)
-    /// if the locations cannot be determined or an empty vector if no locations
-    /// for the provided type are defined.
+    /// Returns [`Error`] if the locations cannot be determined or
+    /// an empty vector if no locations for the provided type are defined.
     ///
     /// # Arguments
     /// * `location` - location type.
@@ -224,15 +221,14 @@ impl StandardPaths {
     /// It also could be used to check a path to be an executable.
     ///
     /// Internally it calls the
-    /// [self.find_executable_in_paths](struct.StandardPaths.html#method.find_executable_in_paths)
+    /// [`self.find_executable_in_paths`]
     /// method with the system path as the `paths` argument. On most operating systems
     /// the system path is determined by the `PATH` environment variable.
     ///
     /// Note: on Windows the executable extensions from the `PATHEXT` environment variable
     /// are automatically appended to the `name` if it doesn't contain any extension.
     ///
-    /// Returns [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
-    /// if no executables are found or if the provided path is not executable.
+    /// Returns [`None`] if no executables are found or if the provided path is not executable.
     ///
     /// # Arguments
     /// * `name` - the name of the searched executable or an absolute path
@@ -255,8 +251,7 @@ impl StandardPaths {
     /// Note: on Windows the executable extensions from the `PATHEXT` environment variable
     /// are automatically appended to the `name` if it doesn't contain any extension.
     ///
-    /// Returns [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
-    /// if no executables are found or if the provided path is not executable.
+    /// Returns [`None`] if no executables are found or if the provided path is not executable.
     ///
     /// # Arguments
     /// * `name` - the name of the searched executable or an absolute path
@@ -274,10 +269,8 @@ impl StandardPaths {
     ///
     /// Returns a full path to the first file or directory found.
     ///
-    /// Returns [Error](https://doc.rust-lang.org/std/io/struct.Error.html)
-    /// if accessing the `location` failed or
-    /// [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
-    /// if no such file or directory can be found.
+    /// Returns [`Error`] if accessing the `location` failed or
+    /// [`None`] if no such file or directory can be found.
     ///
     /// # Arguments
     /// * `location` - the location type where to search.
@@ -320,10 +313,8 @@ impl StandardPaths {
     ///
     /// Returns a vector of full paths to the all files or directories found.
     ///
-    /// Returns [Error](https://doc.rust-lang.org/std/io/struct.Error.html)
-    /// if accessing the `location` failed or
-    /// [None](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None)
-    /// if no such files or directories can be found.
+    /// Returns [`Error`] if accessing the `location` failed or
+    /// [`None`] if no such files or directories can be found.
     ///
     /// # Arguments
     /// * `location` - the location type where to search.
