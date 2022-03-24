@@ -63,8 +63,7 @@ fn xdg_data_dirs() -> Vec<PathBuf> {
 
 impl StandardPaths {
     #[inline]
-    #[doc(hidden)]
-    pub fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
+    pub(super) fn writable_location_impl(&self, location: LocationType) -> Result<PathBuf, Error> {
         match location {
             LocationType::HomeLocation => home::home_dir().ok_or_else(StandardPaths::home_dir_err),
             LocationType::TempLocation => Ok(env::temp_dir()),
@@ -226,8 +225,10 @@ impl StandardPaths {
     }
 
     #[inline]
-    #[doc(hidden)]
-    pub fn standard_locations_impl(&self, location: LocationType) -> Result<Vec<PathBuf>, Error> {
+    pub(super) fn standard_locations_impl(
+        &self,
+        location: LocationType,
+    ) -> Result<Vec<PathBuf>, Error> {
         let mut res: Vec<PathBuf> = match location {
             LocationType::ConfigLocation | LocationType::GenericConfigLocation => xdg_config_dirs(),
             LocationType::AppConfigLocation => {
@@ -275,7 +276,7 @@ impl StandardPaths {
 }
 
 /// Detect if `path` is an executable based on its rights
-pub fn is_executable<P>(path: P) -> bool
+fn is_executable<P>(path: P) -> bool
 where
     P: Into<PathBuf>,
 {
@@ -289,8 +290,7 @@ where
 const EXTENSIONS: [&str; 3] = ["bin", "run", "sh"];
 
 #[inline]
-#[doc(hidden)]
-pub fn find_executable_in_paths_impl<S, P>(name: S, paths: P) -> Option<Vec<PathBuf>>
+pub(super) fn find_executable_in_paths_impl<S, P>(name: S, paths: P) -> Option<Vec<PathBuf>>
 where
     S: Into<String>,
     P: AsRef<Vec<PathBuf>>,
