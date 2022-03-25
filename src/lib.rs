@@ -153,10 +153,7 @@ impl Default for StandardPaths {
     /// derived from the `CARGO_PKG_NAME` variable.
     fn default() -> StandardPaths {
         StandardPaths {
-            app_name: match env::var("CARGO_PKG_NAME") {
-                Ok(name) => name,
-                _ => String::new(),
-            },
+            app_name: env!("CARGO_PKG_NAME").to_string(),
             org_name: String::new(),
         }
     }
