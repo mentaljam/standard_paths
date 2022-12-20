@@ -148,17 +148,6 @@ pub struct StandardPaths {
     org_name: String,
 }
 
-impl Default for StandardPaths {
-    /// Constructs a new [`StandardPaths`] with the application name
-    /// derived from the `CARGO_PKG_NAME` variable.
-    fn default() -> StandardPaths {
-        StandardPaths {
-            app_name: env!("CARGO_PKG_NAME").to_string(),
-            org_name: String::new(),
-        }
-    }
-}
-
 impl StandardPaths {
     /// Constructs a new [`StandardPaths`] with the provided `app` and `organization` names.
     pub fn new<S>(app: S, organization: S) -> StandardPaths
