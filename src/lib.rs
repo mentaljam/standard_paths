@@ -149,14 +149,25 @@ pub struct StandardPaths {
 }
 
 impl StandardPaths {
-    /// Constructs a new [`StandardPaths`] with the provided `app` and `organization` names.
-    pub fn new<S>(app: S, organization: S) -> StandardPaths
+    /// Constructs a new [`StandardPaths`] with the provided `app` and `org` names.
+    pub fn new<S>(app: S, org: S) -> StandardPaths
     where
         S: Into<String>,
     {
         StandardPaths {
             app_name: app.into(),
-            org_name: organization.into(),
+            org_name: org.into(),
+        }
+    }
+
+    /// Constructs a new [`StandardPaths`] with the provided `app` name and with an empty organization.
+    pub fn without_org<S>(app: S) -> StandardPaths
+    where
+        S: Into<String>,
+    {
+        StandardPaths {
+            app_name: app.into(),
+            org_name: Default::default(),
         }
     }
 
