@@ -45,11 +45,11 @@ use std::path::{Path, PathBuf};
 /// ```
 /// use standard_paths::LocationType;
 ///
-/// let sp = standard_paths::default!();
+/// let sp = standard_paths::default_paths!();
 /// println!("{:?}", sp.writable_location(LocationType::AppLocalDataLocation));
 /// ```
 #[macro_export]
-macro_rules! default {
+macro_rules! default_paths {
     () => {
         $crate::StandardPaths::without_org(env!("CARGO_PKG_NAME"))
     };
