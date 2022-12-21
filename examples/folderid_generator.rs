@@ -51,7 +51,6 @@ const {name}: GUID = GUID {{
             guid.get(30..32).unwrap(),
             guid.get(32..34).unwrap(),
             guid.get(34..36).unwrap(),
-            name = name
         );
     }
 }

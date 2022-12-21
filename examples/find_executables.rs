@@ -26,18 +26,17 @@ fn main() {
 
     println!("Searching executables:");
     for exe in args {
-        let fexe = format!("{:>1$}", exe, ind);
+        let fexe = format!("{exe:>ind$}");
         match StandardPaths::find_executable(exe.clone()) {
-            Some(paths) => println!(
-                "{}: \"{}\"",
-                fexe,
-                paths
+            Some(paths) => {
+                let paths = paths
                     .iter()
                     .map(|p| p.to_str().unwrap())
                     .collect::<Vec<_>>()
-                    .join("\", \"")
-            ),
-            _ => println!("{}: not found", fexe),
+                    .join(r#"", ""#);
+                println!(r#"{fexe}: "{paths}""#);
+            },
+            _ => println!("{fexe}: not found"),
         }
     }
 }

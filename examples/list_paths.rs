@@ -37,15 +37,15 @@ fn main() {
                     .collect::<Vec<_>>()
                     .join("\", \"")
             ),
-            Err(err) => println!("{:>14}: {}", name, err),
+            Err(err) => println!("{name:>14}: {err}"),
         }
     }
 
     println!("\nListing writable locations:");
     for (name, value) in &locations {
         match sl.writable_location(*value) {
-            Ok(path) => println!("{:>14}: \"{}\"", name, path.to_str().unwrap()),
-            Err(err) => println!("{:>14}: {}", name, err),
+            Ok(path) => println!(r#"{name:>14}: "{}""#, path.to_str().unwrap()),
+            Err(err) => println!("{name:>14}: {err}"),
         }
     }
 }

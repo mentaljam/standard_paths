@@ -59,10 +59,7 @@ fn main() {
         "GenericConfigLocation" => LocationType::GenericConfigLocation,
         "AppConfigLocation" => LocationType::AppConfigLocation,
         _ => {
-            eprintln!(
-                "Bad location type '{}', see the documentation for valid values",
-                location
-            );
+            eprintln!("Bad location type '{location}', see the documentation for valid values");
             process::exit(1)
         }
     };
@@ -72,10 +69,7 @@ fn main() {
         "LocateFile" => LocateOption::LocateFile,
         "LocateDirectory" => LocateOption::LocateDirectory,
         _ => {
-            eprintln!(
-                "Bad locate option '{}', see the documentation for valid values",
-                option
-            );
+            eprintln!("Bad locate option '{option}', see the documentation for valid values");
             process::exit(1)
         }
     };
@@ -84,21 +78,18 @@ fn main() {
     if locate_all {
         match sp.locate_all(location, &file, option) {
             Ok(paths) => {
-                if paths.is_some() {
-                    println!(
-                        "\"{}\"",
-                        paths
-                            .unwrap()
-                            .iter()
-                            .map(|p| p.to_str().unwrap())
-                            .collect::<Vec<_>>()
-                            .join("\", \"")
-                    );
+                if let Some(paths) = paths {
+                    let paths = paths
+                        .iter()
+                        .map(|p| p.to_str().unwrap())
+                        .collect::<Vec<_>>()
+                        .join(r#"", ""#);
+                    println!(r#""{paths}""#);
                     process::exit(0)
                 }
             }
             Err(err) => {
-                eprintln!("{}", err);
+                eprintln!("{err}");
                 process::exit(2)
             }
         }
@@ -106,16 +97,16 @@ fn main() {
         match sp.locate(location, &file, option) {
             Ok(path) => {
                 if path.is_some() {
-                    println!("\"{}\"", path.unwrap().to_str().unwrap());
+                    println!(r#""{}""#, path.unwrap().to_str().unwrap());
                     process::exit(0)
                 }
             }
             Err(err) => {
-                eprintln!("{}", err);
+                eprintln!("{err}");
                 process::exit(2)
             }
         }
     }
 
-    println!("No entries found for '{}'", file);
+    println!("No entries found for '{file}'");
 }
