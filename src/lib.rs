@@ -43,17 +43,15 @@ use std::path::{Path, PathBuf};
 ///
 /// ### Example
 /// ```
-/// use standard_paths::{LocationType, StandardPaths};
+/// use standard_paths::LocationType;
 ///
-/// fn main() {
-///     let sp = standard_paths::default!();
-///     println!("{:?}", sp.writable_location(LocationType::AppLocalDataLocation));
-/// }
+/// let sp = standard_paths::default!();
+/// println!("{:?}", sp.writable_location(LocationType::AppLocalDataLocation));
 /// ```
 #[macro_export]
 macro_rules! default {
     () => {
-        crate::StandardPaths::without_org(env!("CARGO_PKG_NAME"))
+        $crate::StandardPaths::without_org(env!("CARGO_PKG_NAME"))
     };
 }
 
