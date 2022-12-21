@@ -35,7 +35,7 @@ fn main() {
                     .collect::<Vec<_>>()
                     .join(r#"", ""#);
                 println!(r#"{fexe}: "{paths}""#);
-            },
+            }
             _ => println!("{fexe}: not found"),
         }
     }
