@@ -10,10 +10,8 @@
 //! ```
 //! use standard_paths::{LocationType, StandardPaths};
 //!
-//! fn main() {
-//!     let sp = StandardPaths::new("app", "org");
-//!     println!("{:?}", sp.writable_location(LocationType::AppLocalDataLocation));
-//! }
+//! let sp = StandardPaths::new("app", "org");
+//! println!("{:?}", sp.writable_location(LocationType::AppLocalDataLocation));
 //! ```
 
 #![warn(missing_docs)]
