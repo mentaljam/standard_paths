@@ -38,6 +38,23 @@ use std::env;
 use std::io::{Error, ErrorKind};
 use std::path::{Path, PathBuf};
 
+/// Constructs a new [`StandardPaths`] with the application name
+/// derived from the `CARGO_PKG_NAME` variable.
+///
+/// ### Example
+/// ```
+/// use standard_paths::LocationType;
+///
+/// let sp = standard_paths::default_paths!();
+/// println!("{:?}", sp.writable_location(LocationType::AppLocalDataLocation));
+/// ```
+#[macro_export]
+macro_rules! default_paths {
+    () => {
+        $crate::StandardPaths::without_org(env!("CARGO_PKG_NAME"))
+    };
+}
+
 /// Enumerates the standard location type.
 ///
 /// Is used to call
