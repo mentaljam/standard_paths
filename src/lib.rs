@@ -8,14 +8,11 @@
 //!
 //! ### Usage
 //! ```
-//! extern crate standard_paths;
-//!
-//! use standard_paths::*;
-//! use standard_paths::LocationType::*;
+//! use standard_paths::{LocationType, StandardPaths};
 //!
 //! fn main() {
 //!     let sp = StandardPaths::new("app", "org");
-//!     println!("{:?}", sp.writable_location(AppLocalDataLocation));
+//!     println!("{:?}", sp.writable_location(LocationType::AppLocalDataLocation));
 //! }
 //! ```
 
