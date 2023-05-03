@@ -109,8 +109,7 @@ impl StandardPaths {
                             return Err(Error::new(
                                 ErrorKind::Other,
                                 format!(
-                                    "'XDG_RUNTIME_DIR' points to '{}' which is not a directory",
-                                    path
+                                    "'XDG_RUNTIME_DIR' points to '{path}' which is not a directory"
                                 ),
                             ));
                         }
@@ -281,7 +280,7 @@ where
     P: Into<PathBuf>,
 {
     let path = path.into();
-    match fs::metadata(&path) {
+    match fs::metadata(path) {
         Ok(md) => md.permissions().mode() & 0o111 != 0,
         _ => false,
     }
