@@ -5,7 +5,7 @@ description = """\
     standard paths on the local filesystem (config, cache, user directories \
     and etc.).\
     """
-version = "2.0.1"
+version = "2.1.0"
 edition = "2021"
 authors = ["Petr Tsymbarovich <petr@tsymbarovich.ru>"]
 repository = "https://github.com/mentaljam/standard_paths"
