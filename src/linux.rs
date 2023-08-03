@@ -5,7 +5,6 @@ use std::{
     os::{linux::fs::MetadataExt, unix::fs::PermissionsExt},
     path::PathBuf,
 };
-use users::{get_current_uid, get_user_by_uid};
 
 use crate::{LocationType, StandardPaths};
 
@@ -101,7 +100,8 @@ impl StandardPaths {
 
             LocationType::RuntimeLocation => {
                 // http://standards.freedesktop.org/basedir-spec/latest/
-                let user = get_user_by_uid(get_current_uid()).unwrap();
+                let uid = nix::unistd::geteuid();
+                let user_id = uid.as_raw();
                 let (path, md) = match env::var("XDG_RUNTIME_DIR") {
                     Ok(path) => {
                         let md = fs::metadata(&path)?;
@@ -116,8 +116,15 @@ impl StandardPaths {
                         (PathBuf::from(path), md)
                     }
                     _ => {
+                        let user = match nix::unistd::User::from_uid(uid) {
+                            Ok(opt) => opt.unwrap(),
+                            Err(err) => return Err(Error::new(
+                                ErrorKind::NotFound,
+                                format!("Failed to detect current user: {err}"),
+                            ))
+                        };
                         let mut runtime_dir = String::from("runtime-");
-                        runtime_dir.push_str(&user.name().to_string_lossy());
+                        runtime_dir.push_str(&user.name);
                         let mut path = env::temp_dir();
                         path.push(runtime_dir);
                         let md = fs::metadata(&path)?;
@@ -129,14 +136,13 @@ impl StandardPaths {
                 };
 
                 // The directory MUST be owned by the user
-                if md.st_uid() != user.uid() {
+                let ts_uid = md.st_uid();
+                if ts_uid != user_id {
                     return Err(Error::new(
                         ErrorKind::PermissionDenied,
                         format!(
-                            "Wrong ownership on runtime directory '{}' - {} instead of {}",
-                            path.to_str().unwrap(),
-                            md.st_uid(),
-                            user.uid()
+                            "Wrong ownership on runtime directory '{}' - {ts_uid} instead of {user_id}",
+                            path.to_string_lossy(),
                         ),
                     ));
                 }
